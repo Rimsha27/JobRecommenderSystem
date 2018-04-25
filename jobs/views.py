@@ -180,6 +180,8 @@ def displayingJobDetail(request):
                 }
             )
         return render(request, 'jobsDetail.html', {"jobsDetail": jobToBeStored, "isStoredJob": jobType})
+    else:
+        return render(request, 'Signinform.html')
 
 def jobsretrieving(request):
     if request.method == "POST":
@@ -269,7 +271,7 @@ def jobsretrieving(request):
                     j += 1
         return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
     else:
-        return render(request, 'jobs.html')
+        return render(request, 'Signinform.html')
 
 def saveExplicitRating(request):
     if request.method == "POST":
@@ -337,68 +339,77 @@ def saveExplicitRating(request):
                 {"$set": {"ExplicitRating": Number[1]}}
             )
         return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": jobType})
+    else:
+        return render(request, 'Signinform.html')
 
 def recommendjobs(request):
-    username = request.user.username
-    UserRecord = models.signupModel.objects.filter(email=username)
-    ID = UserRecord[0].idformongo
-    recommendedJobIDsUsingContent = recommendationAlgos.contentBasedRecommendations(ID)
-    recommendedJobIDsUsingALS = recommendationAlgos.ALSrecommendations(ID)
-    print(recommendedJobIDsUsingContent)
-    print(recommendedJobIDsUsingALS)
-    connection = MongoClient(port=27017)
+    if request.method == "POST":
+        username = request.user.username
+        UserRecord = models.signupModel.objects.filter(email=username)
+        ID = UserRecord[0].idformongo
+        recommendedJobIDsUsingContent = recommendationAlgos.contentBasedRecommendations(ID)
+        recommendedJobIDsUsingALS = recommendationAlgos.ALSrecommendations(ID)
+        print(recommendedJobIDsUsingContent)
+        print(recommendedJobIDsUsingALS)
+        connection = MongoClient(port=27017)
 
-    db = connection.JobDatabase
-    jobs = db.Jobs
-    recommendedJobs = []
-    i=0
-    for jobId in recommendedJobIDsUsingContent:
-        if i==3:
-            break;
-        job = jobs.find_one({"ID": jobId})
-        print(job)
-        try:
-            salary = job['Salary']
-        except:
-            salary = ""
-        try:
-            applyLink = job['ApplyLink']
-        except:
-            applyLink = ""
-        recommendedJobs.append(Jobs(job['ID'], job['Title'], job['Company'], job['Location'], salary,
-                                    job['Summary'], applyLink))
-        i=i+1;
+        db = connection.JobDatabase
+        jobs = db.Jobs
+        recommendedJobs = []
+        i=0
+        for jobId in recommendedJobIDsUsingContent:
+            if i==3:
+                break;
+            job = jobs.find_one({"ID": jobId})
+            print(job)
+            try:
+                salary = job['Salary']
+            except:
+                salary = ""
+            try:
+                applyLink = job['ApplyLink']
+            except:
+                applyLink = ""
+            recommendedJobs.append(Jobs(job['ID'], job['Title'], job['Company'], job['Location'], salary,
+                                        job['Summary'], applyLink))
+            i=i+1;
 
-    db = connection.Jobs
-    jobs = db.jobsDetail
-    for jobId in recommendedJobIDsUsingALS:
-        if i==6:
-            break;
-        job = jobs.find_one({"userassignedId": jobId})
-        recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
-                                    job['JobSummary'], job['JobApplyLink']))
-        i=i+1;
+        db = connection.Jobs
+        jobs = db.jobsDetail
+        for jobId in recommendedJobIDsUsingALS:
+            if i==6:
+                break;
+            job = jobs.find_one({"userassignedId": jobId})
+            recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
+                                        job['JobSummary'], job['JobApplyLink']))
+            i=i+1;
 
-    print(recommendedJobs)
+        print(recommendedJobs)
 
-    return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
+        return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
+    else:
+        return render(request, 'Signinform.html')
 
 def findTopRatedJobs(request):
-    topRatedJobs = recommendationAlgos.topRatedJobs()
-    recommendedJobs = []
+    if request.method == "POST":
+        topRatedJobs = recommendationAlgos.topRatedJobs()
+        recommendedJobs = []
 
-    connection = MongoClient(port=27017)
-    db = connection.Jobs
-    jobs = db.jobsDetail
-    i = 1
-    for jobId in topRatedJobs:
-        if i == 6:
-            break;
-        job = jobs.find_one({"userassignedId": jobId})
-        recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
-                                    job['JobSummary'], job['JobApplyLink']))
-        i = i + 1;
+        connection = MongoClient(port=27017)
+        db = connection.Jobs
+        jobs = db.jobsDetail
+        i = 1
+        for jobId in topRatedJobs:
+            if i == 6:
+                break;
+            job = jobs.find_one({"userassignedId": jobId})
+            recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
+                                        job['JobSummary'], job['JobApplyLink']))
+            i = i + 1;
 
-    print(recommendedJobs)
+        print(recommendedJobs)
 
-    return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
+        return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
+
+    else:
+        return render(request, 'Signinform.html')

@@ -164,7 +164,8 @@
 
 
 <!-- Page Header -->
-<header class="masthead" style="background-image: url('/static/img/home.jpg')">
+{% if user.is_authenticated %}
+<header class="masthead" style="background-image: url('{% static 'img/home.jpg' %}">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
@@ -511,6 +512,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 
 <!--

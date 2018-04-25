@@ -2,9 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from pandas._libs import json
-from bs4 import BeautifulSoup
 from pymongo import MongoClient
-import requests
 
 from accounts import models
 from accounts.models import signupModel, workexperienceModel, Education
@@ -219,6 +217,8 @@ def logoutview(request):
     if request.method == "POST":
         logout(request)
         return redirect('home')
+    else:
+        return render(request, 'Signupform.html')
 
 
 def mainpageview(request):
@@ -251,6 +251,8 @@ def mainpageview(request):
                                                  "Skills": skills,
                                                  "Interests": interests1
                                                  })
+    else:
+        return render(request, 'Signinform.html')
 
 
 def editprofile(request):
@@ -282,7 +284,8 @@ def editprofile(request):
                                                     "Skills": skills,
                                                     "Interests": interests1
                                                     })
-
+    else:
+        return render(request, 'Signinform.html')
 
 def updateinformation(request):
     flag = False
@@ -448,8 +451,9 @@ def updateinformation(request):
                     return render(request, 'jobs.html',
                                   {'error': "Bio Updated Successfully"})
 
-    return render(request, 'EditProfile.html')
-
+        return render(request, 'EditProfile.html')
+    else:
+        return render(request, 'Signinform.html')
 
 def username_present(username):
     try:
@@ -462,37 +466,5 @@ def username_present(username):
 def sendtohome(request):
     if request.method == "POST":
         return render(request, "jobs.html")
-
-# return render_to_response("MainPage.html", {
-#     'UserRecord': UserRecord, 'UserEducation': UserEducations,
-#     'UserExperiences': UserExperiences,
-# }, context_instance=RequestContext(request))
-
-# print("agya5")
-
-# print(request.POST['name'])
-# print(request.POST['dob'])
-#
-# answer = request.POST.get('gender', None)
-# print(answer)
-#
-# print(request.POST['username'])
-# print(request.POST['password'])
-#
-# print(request.POST.getlist("skills[]"))
-# print(request.POST.getlist("interests[]"))
-#
-# print(request.POST['Country'])
-# print(request.POST['City'])
-#
-# print(request.POST.getlist('Company[]'))
-# print(request.POST.getlist('Position[]'))
-# print(request.POST.getlist('startdates[]'))
-# print(request.POST.getlist('enddates[]'))
-#
-# print(request.POST.getlist('degreenames[]'))
-# print(request.POST.getlist('institution[]'))
-# print(request.POST.getlist('startdates1[]'))
-# print(request.POST.getlist('enddates1[]'))
-#
-# print(request.POST['textarea'])
+    else:
+        return render(request, 'Signinform.html')

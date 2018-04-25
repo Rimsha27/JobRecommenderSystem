@@ -1,0 +1,530 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MainPage</title>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+
+    <!--
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+            -->
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom fonts for this template-->
+
+
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+
+
+
+    <style>
+        .header {
+            color: #36A0FF;
+            font-size: 27px;
+            padding: 10px;
+        }
+
+        .bigicon {
+            font-size: 35px;
+            color: #36A0FF;
+        }
+
+        .container1 {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .container1 {
+                width: 750px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container1 {
+                width: 970px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container1 {
+                width: 1170px;
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+
+            <ul class="navbar-nav ml-auto">
+
+
+                {% if user.is_authenticated %}
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle navbar-brand" data-toggle="dropdown" href=""
+                           style="text-decoration: none;color: #ffffff;font-size: large">Settings
+
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
+                            <form id="logout" method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+                            <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a>
+                            </li>
+                            <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a>
+                            </li>
+                            <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+                        </ul>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Sign In</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/static/img/home.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Your Profile</h1>
+                    <span class="subheading">View Profile Below</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container4">
+    <div class="row4">
+        <div class="col-md-12">
+            <div class="well well-sm">
+
+                <form class="form-horizontal" method="post" action="{% url 'accounts:sendingtohome' %}">
+
+                    {% csrf_token %}
+
+                    <fieldset>
+                        <legend style="font-size: 12px">Profile Credentials</legend>
+
+
+
+                        {% for user in UserRecord.all %}
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input style="font-size: 12px" id="name" name="name" type="text"
+                                           value="{{ user.name }}"
+                                           class="form-control" placeholder="name" readonly>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input style="font-size: 12px" id="dob" name="dob" type="text"
+                                           value="{{ user.dateofbirth }}"
+                                           class="form-control" placeholder="DateofBirth" readonly>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <select id="gender" name="gender" class="form-control" style="font-size: 12px"
+                                            disabled>
+                                        <option value="male" {% if flag %} selected="selected"  {% endif %}  >Male
+                                        </option>
+                                        <option value="female"{% if flag1 %} selected="selected"  {% endif %} >Female
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input style="font-size: 12px" id="email" name="email" type="email"
+                                           value="{{ user.email }}"
+                                           class="form-control" placeholder="Email" readonly>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input style="font-size: 12px" id="password" name="password" type="text"
+                                           value="{{ user.password }}"
+                                           class="form-control" placeholder="Password" readonly>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input style="font-size: 12px" id="country" name="country" type="text"
+                                           value="{{ user.country }}"
+                                           class="form-control" placeholder="country" readonly>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input style="font-size: 12px" id="City" name="City" type="text"
+                                           value="{{ user.city }}"
+                                           class="form-control" placeholder="city" readonly>
+                                </div>
+                            </div>
+
+
+                            <hr>
+
+
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+
+
+                                    <div class="text-left">
+
+                                        <h4>Skills</h4>
+
+
+                                    </div>
+
+
+                                    <div class="container2">
+                                        <div class="row2">
+                                            <div class="col-lg-3">
+                                                <div class="col-xs-10">
+
+                                                    {% for skills in Skills %}
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="skills[]"
+                                                               value="{{ skills }}" readonly/>
+                                                    {% endfor %}
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+
+                                    <div class="text-left">
+                                        <h4>Interests</h4>
+
+                                    </div>
+
+
+                                    <div class="container3">
+                                        <div class="row3">
+                                            <div class="col-lg-3 temp1" id="temp1">
+
+
+                                                {% for interest in Interests %}
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" id="{{ forloop.counter }}"
+                                                               type="text"
+                                                               class="form-control " name="interests[]"
+                                                               value="{{ interest }}" readonly/>
+                                                    </div>
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr>
+
+                            {#                            <div class="form-group">#}
+                            {#                                <div class="col-md-8">#}
+                            {#                                    <h4>WorkExperiences</h4>#}
+                            {##}
+                            {##}
+                            {#                                    <div class="container">#}
+                            {#                                        <div class="row">#}
+                            {##}
+                            {##}
+                            {#                                            {% for work in UserExperience.all %}#}
+                            {#                                                <div class="col-lg-3">#}
+                            {#                                                    <div class="col-xs-10">#}
+                            {#                                                        <input style="font-size: 12px" type="text" class="form-control"#}
+                            {#                                                               name="Company[]"#}
+                            {#                                                               value="{{ work.company }}"#}
+                            {#                                                               readonly/>#}
+                            {#                                                    </div>#}
+                            {#                                                </div>#}
+                            {#                                                <div class="col-lg-3">#}
+                            {#                                                    <div class="col-xs-10">#}
+                            {#                                                        <input style="font-size: 12px" type="text" class="form-control"#}
+                            {#                                                               name="Position[]"#}
+                            {#                                                               value="{{ work.position }}"#}
+                            {#                                                               readonly/>#}
+                            {#                                                    </div>#}
+                            {#                                                </div>#}
+                            {#                                                <div class="col-lg-3">#}
+                            {#                                                    <div class="col-xs-10">#}
+                            {#                                                        <input style="font-size: 12px" type="date" class="form-control"#}
+                            {#                                                               name="startdates[]"#}
+                            {#                                                               value="{{ work.startDate }}" readonly/>#}
+                            {#                                                    </div>#}
+                            {#                                                </div>#}
+                            {#                                                <div class="col-lg-3">#}
+                            {#                                                    <div class="col-xs-10">#}
+                            {#                                                        <input style="font-size: 12px" type="date" class="form-control"#}
+                            {#                                                               name="enddates[]"#}
+                            {#                                                               value="{{ work.endDate }}"#}
+                            {#                                                               readonly/>#}
+                            {#                                                    </div>#}
+                            {#                                                </div>#}
+                            {##}
+                            {#                                            {% endfor %}#}
+                            {##}
+                            {##}
+                            {##}
+                            {##}
+                            {#                                            <hr/>#}
+                            {#                                        </div>#}
+                            {#                                    </div>#}
+                            {#                                </div>#}
+                            {#                            </div>#}
+                            {#                            <hr>#}
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <h4>Work Experiences</h4>
+
+
+                                    <div class="container1">
+                                        <div class="row1">
+
+                                            {% for work in UserExperience.all %}
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="Company[]"
+                                                               value="{{ work.company }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="Position[]"
+                                                               value="{{ work.position }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="date" class="form-control"
+                                                               name="startdates[]"
+                                                               value="{{ work.startDate }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="date" class="form-control"
+                                                               name="enddates[]"
+                                                               value="{{ work.endDate }}" readonly/>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <h4>Educations</h4>
+
+
+                                    <div class="container1">
+                                        <div class="row1">
+
+                                            {% for edu in UserEducation.all %}
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="degreenames[]"
+                                                               value="{{ edu.degree }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="institution[]"
+                                                               value="{{ edu.institution }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="date" class="form-control"
+                                                               name="startdates1[]"
+                                                               value="{{ edu.startdateedu }}" readonly/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input style="font-size: 12px" type="date" class="form-control"
+                                                               name="enddates1[]"
+                                                               value="{{ edu.enddateedu }}" readonly/>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                <textarea style="font-size: 12px" class="form-control" id="objstat" name="objstat"
+                                          placeholder="Objective Statement"
+                                          rows="7" readonly
+                                >{{ user.objectivestatement }}</textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary btn-lg"
+                                    >Go To Jobs
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+-->
+
+
+<script src="{% static 'js/clean-blog.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+
+</body>
+</html>

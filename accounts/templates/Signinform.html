@@ -1,0 +1,152 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SignIn form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <!-- Bootstrap core CSS-->
+
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+
+          type='text/css'>
+
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+
+
+
+    <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+
+    <style>
+        input { font-size: 50px; }
+        textarea { font-size: 18px; }
+    </style>
+
+
+</head>
+
+<body>
+
+{##}
+{#<nav class="navbar navbar-inverse" style="margin: 0px">#}
+{#    <div class="container-fluid">#}
+{#        <div class="navbar-header">#}
+{#            <a class="navbar-brand" href="#">WebSiteName</a>#}
+{#        </div>#}
+{#        <ul class="nav navbar-nav">#}
+{#            <li><a href="{% url 'home' %}">Home</a></li>#}
+{#        </ul>#}
+{#        <ul class="nav navbar-nav navbar-right">#}
+{#            <li><a href="{% url 'accounts:signup' %}"><span class="glyphicon glyphicon-user"></span> Sign#}
+{#                Up</a></li>#}
+{#            <li class="active"><a href="{% url 'accounts:login' %}"><span class="glyphicon glyphicon-log-in"></span>#}
+{#                Login</a></li>#}
+{##}
+{#        </ul>#}
+{#    </div>#}
+{#</nav>#}
+
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home:homes' %}">Home Page</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:login' %}">Sign In</a>
+                </li>
+
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/static/img/home.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Sign In</h1>
+                    <span class="subheading">Sign In Here</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container" style="margin-top: 10px">
+    <h2>SignIn Form</h2>
+
+    {% if error %}
+        <p style="color: red">{{ error }}</p>
+    {% endif %}
+
+    <form action="{% url 'accounts:login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="username1"  style="font-size: 12px" placeholder="Enter email" name="username1">
+        </div>
+
+
+        <div class="form-group">
+            <label for="pwd">Password:</label>
+            <input type="password" class="form-control" id="password1"  style="font-size: 12px" placeholder="Enter password" name="password1">
+        </div>
+
+
+        <button type="submit" class="btn btn-danger" style="margin-top: 10px">Login</button>
+
+
+    </form>
+</div>
+
+
+<!--
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+-->
+
+
+<script src="{% static 'js/clean-blog.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+
+</body>
+
+</html>

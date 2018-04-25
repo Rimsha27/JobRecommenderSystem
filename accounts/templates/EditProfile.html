@@ -1,0 +1,727 @@
+
+
+
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EditProfile</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+
+    <!--
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+            -->
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom fonts for this template-->
+
+
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+
+
+    <style>
+        .header {
+            color: #36A0FF;
+            font-size: 27px;
+            padding: 10px;
+        }
+
+        .bigicon {
+            font-size: 35px;
+            color: #36A0FF;
+        }
+
+        .container1 {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .container1 {
+                width: 750px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container1 {
+                width: 970px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container1 {
+                width: 1170px;
+            }
+        }
+
+        .container5 {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .container5 {
+                width: 750px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container5 {
+                width: 970px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container5 {
+                width: 1170px;
+            }
+        }
+
+
+    </style>
+
+</head>
+<body>
+{##}
+{#<nav class="navbar navbar-inverse" style="margin: 0px;position: static">#}
+{#    <div class="container-fluid">#}
+{#        <div class="navbar-header">#}
+{#            <a class="navbar-brand" href="#">WebSiteName</a>#}
+{#        </div>#}
+{#        <ul class="nav navbar-nav">#}
+{#            <li><a href="{% url 'jobs:jobs' %}">MainPage</a></li>#}
+{##}
+{#        </ul>#}
+{##}
+{##}
+{#        <ul class="nav navbar-nav navbar-right">#}
+{##}
+{#            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <span#}
+{#                    class="caret"></span></a>#}
+{#                <ul class="dropdown-menu">#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>#}
+{#                    <form id="logout" method="post" action="{% url 'accounts:logout' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>#}
+{#                    <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a></li>#}
+{#                    <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>#}
+{#                    <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                </ul>#}
+{#            </li>#}
+{##}
+{#        </ul>#}
+{#    </div>#}
+{#</nav>#}
+
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+
+            <ul class="navbar-nav ml-auto">
+
+
+                {% if user.is_authenticated %}
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle navbar-brand" data-toggle="dropdown" href=""
+                           style="text-decoration: none;color: #ffffff;font-size: large">Settings
+
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
+                            <form id="logout" method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+                            <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a>
+                            </li>
+                            <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a>
+                            </li>
+                            <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+                        </ul>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Sign In</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/static/img/home.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Editing the Profile</h1>
+                    <span class="subheading">Edit the profile here</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div class="container4">
+    <div class="row4">
+        <div class="col-md-12">
+            <div class="well well-sm">
+
+                <form class="form-horizontal" method="post" action="{% url 'accounts:updateinfo' %}">
+
+                    {% csrf_token %}
+
+                    <fieldset>
+                        <legend>Change Profile</legend>
+
+                        {% if error %}
+                            <p style="color: red">{{ error }}</p>
+                            <br/>
+                            <br/>
+                        {% endif %}
+
+
+
+                        {% for user in UserRecord.all %}
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="name" name="name" type="text" value="{{ user.name }}"
+                                           class="form-control" placeholder="name" required>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="dob" name="dob" type="text" value="{{ user.dateofbirth }}"
+                                           class="form-control" placeholder="DateofBirth" required>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <select id="gender" name="gender" class="form-control">
+                                        <option value="male" {% if flag %} selected="selected" {% endif %}>Male</option>
+                                        <option value="female"{% if flag1 %} selected="selected" {% endif %} >Female
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="email" name="email" type="email" value="{{ user.email }}"
+                                           class="form-control" placeholder="Email" required>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="password" name="password" type="text" value="{{ user.password }}"
+                                           class="form-control" placeholder="Password" required>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="country" name="country" type="text" value="{{ user.country }}"
+                                           class="form-control" placeholder="country" required>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="City" name="City" type="text" value="{{ user.city }}"
+                                           class="form-control" placeholder="city" required>
+                                </div>
+                            </div>
+
+
+                            <hr>
+
+
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary" value='Add Skill' id='addskill'/>
+                                        <input type='button' class="btn btn-danger" value='Remove Skill'
+                                               id='removeskill'>
+                                    </div>
+
+                                    <div class="container2">
+                                        <div class="row2">
+                                            <div class="col-lg-3">
+                                                <div class="col-xs-10">
+
+                                                    {% for skills in Skills %}
+                                                        <input type="text" class="form-control" name="skills[]"
+                                                               value="{{ skills }}" required/>
+                                                    {% endfor %}
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+
+
+                                    <div class="text-left">
+
+                                        <input type="button" class="btn btn-primary" value='Add Interest'
+                                               id='addinterest'/>
+                                        <input type='button' class="btn btn-danger" value='Remove Interest'
+                                               id='removeinterest'>
+
+                                    </div>
+
+                                    <div class="container3">
+                                        <div class="row3">
+                                            <div class="col-lg-3 temp1" id="temp1">
+
+                                                {% for interest in Interests %}
+                                                    <div class="col-xs-10">
+                                                        <input id="{{ forloop.counter }}" type="text"
+                                                               class="form-control " name="interests[]"
+                                                               value="{{ interest }}" required/>
+                                                    </div>
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr>
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <h4>WorkExperiences</h4>
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary" value='Add Experience'
+                                               id='addButton'/>
+                                        <input type='button' class="btn btn-danger" value='Remove Experience'
+                                               id='removeButton'>
+                                    </div>
+                                    <hr>
+                                    <div class="container5">
+                                        <div class="row5">
+
+
+                                            {% for work in UserExperience.all %}
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control" name="Company[]"
+                                                               value="{{ work.company }}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control" name="Position[]"
+                                                               value="{{ work.position }}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control" name="startdates[]"
+                                                               value="{{ work.startDate }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control" name="enddates[]"
+                                                               value="{{ work.endDate }}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+
+                                            {% endfor %}
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <h4>Educations</h4>
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary"
+                                               value='Add Education'
+                                               id='addEducation'/>
+                                        <input type='button' class="btn btn-danger"
+                                               value='Remove Education'
+                                               id='removeEducation'>
+                                    </div>
+                                    <hr/>
+
+
+                                    <div class="container1">
+                                        <div class="row1">
+
+                                            {% for edu in UserEducation.all %}
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control"
+                                                               name="degreenames[]"
+                                                               value="{{ edu.degree }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control"
+                                                               name="institution[]"
+                                                               value="{{ edu.institution }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control"
+                                                               name="startdates1[]"
+                                                               value="{{ edu.startdateedu }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control"
+                                                               name="enddates1[]"
+                                                               value="{{ edu.enddateedu }}" required/>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                <textarea class="form-control" id="objstat" name="objstat"
+                                          placeholder="Objective Statement"
+                                          rows="7"
+                                >{{ user.objectivestatement }}</textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary btn-lg"
+                                    >Save Changes
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // for Education
+
+
+    var $container = $('.container5');
+    var $row = $('.row5');
+    var $add = $('#addButton');
+    var $remove = $('#removeButton');
+    var $focused;
+
+    $container.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+    $add.on('click', function () {
+        var $newRow = $row.clone().insertAfter('.row5:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+    $remove.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row5');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+
+
+        }
+    });
+
+    // for work experiences
+    var $container1 = $('.container1');
+    var $row1 = $('.row1');
+    var $addedu = $('#addEducation');
+    var $removeedu = $('#removeEducation');
+
+
+    $container1.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addedu.on('click', function () {
+        var $newRow = $row1.clone().insertAfter('.row1:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeedu.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row1');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+
+    // for skills
+
+    var $container2 = $('.container2');
+    var $row2 = $('.row2');
+    var $addskill = $('#addskill');
+    var $removeskill = $('#removeskill');
+
+
+    $container2.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addskill.on('click', function () {
+        var $newRow = $row2.clone().insertAfter('.row2:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeskill.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row2');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+    // for interest
+
+    var $container3 = $('.container3');
+    var $row3 = $('.row3');
+    var $addinterest = $('#addinterest');
+
+    var $temp = $('.temp');
+
+    var $removeinterest = $('#removeinterest');
+
+
+    $container3.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addinterest.on('click', function () {
+        var $newRow = $row3.clone().insertAfter('.row3:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+
+        {#        var lastChild = document.getElementById("temp1").lastChild;#}
+        {#        var lastChildID = lastChild.id;#}
+        {#        var newId = lastChildID + 1;#}
+        {#        var x = document.createElement("INPUT");#}
+        {#        x.setAttribute("type", "text");#}
+        {#        x.setAttribute("id", newId);#}
+        {#        x.setAttribute("class","form-control");#}
+        {#        document.getElementById("temp1").appendChild(x);#}
+
+    });
+
+
+    $removeinterest.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row3');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+
+</script>
+
+
+<!--
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+-->
+
+
+<script src="{% static 'js/clean-blog.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+
+</body>
+</html>

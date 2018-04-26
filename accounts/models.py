@@ -15,7 +15,7 @@ class signupModel(models.Model):
     city = models.CharField(max_length=100)
     skills = models.TextField(null=True)
     interests = models.TextField(null=True)
-    objectivestatement = models.CharField(max_length=100)
+    objectivestatement = models.CharField(max_length=1000)
     idformongo = models.TextField(null=True)
 
 

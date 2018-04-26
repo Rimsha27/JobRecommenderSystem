@@ -15,7 +15,7 @@ def signup(request):
             User.objects.get(username=request.POST['username'])
             return render(request, 'Signupform.html', {'error': 'Email has already been taken!Try Another Mail'})
         except User.DoesNotExist:
-
+            ID = 1
             # Here the stuff will also be saved in the MongoDB in order to generate the Recommendation
             # for the User which has just signed in
 

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from pandas._libs import json
 from pymongo import MongoClient
+import urllib.parse
 
 from accounts import models
 from accounts.models import signupModel, workexperienceModel, Education
@@ -15,126 +16,130 @@ def signup(request):
             User.objects.get(username=request.POST['username'])
             return render(request, 'Signupform.html', {'error': 'Email has already been taken!Try Another Mail'})
         except User.DoesNotExist:
-            ID = 1
-            # Here the stuff will also be saved in the MongoDB in order to generate the Recommendation
-            # for the User which has just signed in
+            _MONGODB_USER = "hjrsfyp"
+            _MONGODB_PASSWD = "123456"
+            _MONGODB_HOST = "ds259089.mlab.com:59089"
+            _MONGODB_NAME = "jrs"
+            mongo_uri = 'mongodb://%s:%s@%s/%s' % (_MONGODB_USER, _MONGODB_PASSWD, _MONGODB_HOST, _MONGODB_NAME)
+            client = MongoClient(mongo_uri)
+            db = client.jrs
+            #Here the stuff will also be saved in the MongoDB in order to generate the Recommendation for the User which has just signed in
 
-            # client = MongoClient('localhost:27017')
-            # db = client.ResumeDatabase
-            #
-            # # Inserting the ID of the Relevant User
-            # no_of_documents = db.Person.count();
-            # ID = no_of_documents + 1
-            #
-            # db.Person.insert_one(
-            #     {
-            #         "ID": ID,
-            #     })
-            #
-            # # Making Profile Data Variable for TF-IDF Comparison
-            # # Initially profileData String is populated with Position Applied
-            # profileData = "not mentioned"
-            #
-            # db.Person.update(
-            #     {"ID": ID},
-            #     {"$set": {"Position Applied": "not mentioned"}}
-            # )
-            #
-            # # Populating the Profile Data with the Userlocation which is the concatenation of
-            # # of the city and the country
-            # profileData += " " + request.POST['City'] + request.POST['Country']
-            #
-            # db.Person.update(
-            #     {"ID": ID},
-            #     {"$set": {"User Location": request.POST['City'] + request.POST['Country']}}
-            # )
-            #
-            # # Populating the profileData with the objective the user has entered in the box
-            # profileData += " " + request.POST['textarea']
-            #
-            # db.Person.update(
-            #     {"ID": ID},
-            #     {"$set": {"Objective": request.POST['textarea']}}
-            # )
-            #
-            #
-            #
-            #
-            # listofcompanies1 = request.POST.getlist('Company[]')
-            # listofpositions1 = request.POST.getlist('Position[]')
-            # listofstartdates1 = request.POST.getlist('startdates[]')
-            # listofenddates1 = request.POST.getlist('enddates[]')
-            # listofDescription1 = request.POST.getlist('Descriptions[]')
-            #
-            # for i in range(0, len(listofcompanies1)):
-            #     profileData += " " + listofcompanies1[i]
-            #     profileData += " " + listofpositions1[i]
-            #     profileData += " " + listofDescription1[i]
-            #
-            #     db.Person.update(
-            #         {"ID": ID},
-            #         {"$push": {"Work Experience": {
-            #             "ExperienceID": i,
-            #             "Company": listofcompanies1[i],
-            #             "Title": listofpositions1[i],
-            #             "Dates": listofstartdates1[i] + ' to ' + listofenddates1[i],
-            #             "Description": listofDescription1[i]
-            #         }}}
-            #     )
-            #
-            # listofdegrees1 = request.POST.getlist('degreenames[]')
-            # listofinstitution1 = request.POST.getlist('institution[]')
-            # listofstartdates2 = request.POST.getlist('startdates1[]')
-            # listofenddates2 = request.POST.getlist('enddates1[]')
-            #
-            # for i in range(0, len(listofdegrees1)):
-            #     profileData += " " + listofinstitution1[i]
-            #     profileData += " " + listofdegrees1[i]
-            #
-            #     db.Person.update(
-            #         {"ID": ID},
-            #         {"$push": {"Education": {
-            #             "EducationID": i,
-            #             "School": listofinstitution1[i],
-            #             "Title": listofdegrees1[i],
-            #             "Dates": listofstartdates2[i] + ' to ' + listofenddates2[i],
-            #         }}}
-            #     )
-            #
-            # skills_coming = request.POST.getlist('skills[]')
-            # interests_coming = request.POST.getlist('interests[]')
-            #
-            # for i in range(0, len(skills_coming)):
-            #     profileData += " " + skills_coming[i]
-            #     db.Person.update(
-            #         {"ID": ID},
-            #         {"$push": {"Skills": {
-            #             "Skill": skills_coming[i],
-            #         }}}
-            #     )
-            #
-            # temp1 = ""
-            # for i in range(0, len(interests_coming)):
-            #     if i == len(interests_coming) - 1:
-            #         temp1 = temp1 + interests_coming[i]
-            #     else:
-            #         temp1 = temp1 + interests_coming[i] + ','
-            #
-            #
-            #
-            #
-            # profileData += " " + temp1
-            # db.Person.update(
-            #     {"ID": ID},
-            #     {"$set": {"Additional Information": temp1}}
-            # )
-            #
-            # db.Person.update(
-            #     {"ID": ID},
-            #     {"$set": {"Profile Data": profileData}}
-            # )
-            #
-            #
+            resumeCollection = db.ResumeCollection
+
+            # Inserting the ID of the Relevant User
+            no_of_documents = resumeCollection.count();
+            ID = no_of_documents + 1
+
+            resumeCollection.insert_one(
+                {
+                    "ID": ID,
+                })
+
+            # Making Profile Data Variable for TF-IDF Comparison
+            # Initially profileData String is populated with Position Applied
+            profileData = "not mentioned"
+
+            resumeCollection.update(
+                {"ID": ID},
+                {"$set": {"Position Applied": "not mentioned"}}
+            )
+
+            # Populating the Profile Data with the Userlocation which is the concatenation of
+            # of the city and the country
+            profileData += " " + request.POST['City'] + request.POST['Country']
+
+            resumeCollection.update(
+                {"ID": ID},
+                {"$set": {"User Location": request.POST['City'] + request.POST['Country']}}
+            )
+
+            # Populating the profileData with the objective the user has entered in the box
+            profileData += " " + request.POST['textarea']
+
+            resumeCollection.update(
+                {"ID": ID},
+                {"$set": {"Objective": request.POST['textarea']}}
+            )
+
+
+
+
+            listofcompanies1 = request.POST.getlist('Company[]')
+            listofpositions1 = request.POST.getlist('Position[]')
+            listofstartdates1 = request.POST.getlist('startdates[]')
+            listofenddates1 = request.POST.getlist('enddates[]')
+            listofDescription1 = request.POST.getlist('Descriptions[]')
+
+            for i in range(0, len(listofcompanies1)):
+                profileData += " " + listofcompanies1[i]
+                profileData += " " + listofpositions1[i]
+                profileData += " " + listofDescription1[i]
+
+                resumeCollection.update(
+                    {"ID": ID},
+                    {"$push": {"Work Experience": {
+                        "ExperienceID": i,
+                        "Company": listofcompanies1[i],
+                        "Title": listofpositions1[i],
+                        "Dates": listofstartdates1[i] + ' to ' + listofenddates1[i],
+                        "Description": listofDescription1[i]
+                    }}}
+                )
+
+            listofdegrees1 = request.POST.getlist('degreenames[]')
+            listofinstitution1 = request.POST.getlist('institution[]')
+            listofstartdates2 = request.POST.getlist('startdates1[]')
+            listofenddates2 = request.POST.getlist('enddates1[]')
+
+            for i in range(0, len(listofdegrees1)):
+                profileData += " " + listofinstitution1[i]
+                profileData += " " + listofdegrees1[i]
+
+                resumeCollection.update(
+                    {"ID": ID},
+                    {"$push": {"Education": {
+                        "EducationID": i,
+                        "School": listofinstitution1[i],
+                        "Title": listofdegrees1[i],
+                        "Dates": listofstartdates2[i] + ' to ' + listofenddates2[i],
+                    }}}
+                )
+
+            skills_coming = request.POST.getlist('skills[]')
+            interests_coming = request.POST.getlist('interests[]')
+
+            for i in range(0, len(skills_coming)):
+                profileData += " " + skills_coming[i]
+                resumeCollection.update(
+                    {"ID": ID},
+                    {"$push": {"Skills": {
+                        "Skill": skills_coming[i],
+                    }}}
+                )
+
+            temp1 = ""
+            for i in range(0, len(interests_coming)):
+                if i == len(interests_coming) - 1:
+                    temp1 = temp1 + interests_coming[i]
+                else:
+                    temp1 = temp1 + interests_coming[i] + ','
+
+
+
+
+            profileData += " " + temp1
+            resumeCollection.update(
+                {"ID": ID},
+                {"$set": {"Additional Information": temp1}}
+            )
+
+            resumeCollection.update(
+                {"ID": ID},
+                {"$set": {"Profile Data": profileData}}
+            )
+
+
             user1 = User.objects.create_user(request.POST['username'], password=request.POST['password'])
 
             #Creating the user Signup Model

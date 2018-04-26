@@ -6,6 +6,13 @@ from accounts import models
 from . import recommendationAlgos
 
 jobs = []
+_MONGODB_USER = "hjrsfyp"
+_MONGODB_PASSWD = "123456"
+_MONGODB_HOST = "ds259089.mlab.com:59089"
+_MONGODB_NAME = "jrs"
+mongo_uri = 'mongodb://%s:%s@%s/%s' % (_MONGODB_USER, _MONGODB_PASSWD, _MONGODB_HOST, _MONGODB_NAME)
+client = MongoClient(mongo_uri)
+db = client.jrs
 
 class Jobs(object):
     # Note that we're taking an argument besides self, here.
@@ -26,15 +33,10 @@ def jobsviewing(request):
 def displayingJobDetail(request):
     if request.user.is_authenticated:
         global jobs
-        connection = MongoClient(port=27017)
+        implicitFbCollection = db.ImplicitFeedbackCollection
 
-        implicitFbDB = connection.ImplicitFeedback
-
-        jobsDB = connection.Jobs
-        jobDetailsCollection = jobsDB.jobsDetail
-
-        storedJobs = connection.JobDatabase
-        storedJobsCollection= storedJobs.Jobs
+        jobDetailsCollection = db.RatedJobsCollection
+        storedJobsCollection = db.StoredJobsCollection
 
         # Here I will first get the Job id from the Hidden Text Box
         jobId = [key for key in request.POST if key.startswith("jobId")]
@@ -157,7 +159,7 @@ def displayingJobDetail(request):
                                      jobsData['JobSalary'], jobsData['JobSummary'], jobsData['JobApplyLink'])
 
         #If the user has rated the job before
-        feed_back_of_user = implicitFbDB.reviews.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
+        feed_back_of_user = implicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
         #If he hadn't
         if feed_back_of_user is None:
             print("Nothing initially in the DB")
@@ -167,13 +169,13 @@ def displayingJobDetail(request):
                 'Jobid': jobId,
                 'ImplicitRating': implicit_feedback_count
             }
-            result = implicitFbDB.reviews.insert_one(Feedback)
+            result = implicitFbCollection.insert_one(Feedback)
         #f he had
         else:
             # This means that the User has already opened this job and gave implplicit rating
             # So increasing the previous count Would do the job
             # Incrementing the Job Implicit Rating
-            implicitFbDB.reviews.update(
+            implicitFbCollection.update(
                 {'Userid': UserRecord[0].idformongo, 'Jobid': jobId},
                 {
                     "$inc": {"ImplicitRating": 1}
@@ -276,10 +278,9 @@ def jobsretrieving(request):
 def saveExplicitRating(request):
     if request.user.is_authenticated:
         global jobs
-        connection = MongoClient(port=27017)
-        explicitFbDB = connection.ExplicitFeedback
-        jobsDB = connection.Jobs
-        jobDetailsCollection = jobsDB.jobsDetail
+
+        ExplicitFbCollection = db.ExplicitFeedbackCollection
+        jobDetailsCollection = db.RatedJobsCollection
 
         actual_star_number_and_job_number = request.POST.get('star')
         jobType = [key for key in request.POST if key.startswith("jobType")]
@@ -312,8 +313,7 @@ def saveExplicitRating(request):
                 jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
                 jobId = jobsData['userassignedId']
             else:
-                storedJobs = connection.JobDatabase
-                storedJobsCollection = storedJobs.Jobs
+                storedJobsCollection = db.StoredJobsCollection
 
                 jobsData = storedJobsCollection.find_one({"ID": jobId})
                 jobTitle = jobsData['Title']
@@ -321,7 +321,7 @@ def saveExplicitRating(request):
                 jobId = jobsData['userassignedId']
 
         # If the user has rated the job before
-        feed_back_of_user = explicitFbDB.reviews.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
+        feed_back_of_user = ExplicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
 
         # If he hadn't
         if feed_back_of_user is None:
@@ -331,10 +331,10 @@ def saveExplicitRating(request):
                 'Jobid': jobId,
                 'ExplicitRating': Number[1]
             }
-            result = explicitFbDB.reviews.insert_one(Feedback)
+            result = ExplicitFbCollection.insert_one(Feedback)
         #If he had, update the rating
         else:
-            explicitFbDB.reviews.update(
+            ExplicitFbCollection.update(
                 {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
                 {"$set": {"ExplicitRating": Number[1]}}
             )
@@ -351,10 +351,8 @@ def recommendjobs(request):
         recommendedJobIDsUsingALS = recommendationAlgos.ALSrecommendations(ID)
         print(recommendedJobIDsUsingContent)
         print(recommendedJobIDsUsingALS)
-        connection = MongoClient(port=27017)
 
-        db = connection.JobDatabase
-        jobs = db.Jobs
+        jobs = db.StoredJobsCollection
         recommendedJobs = []
         i=0
         for jobId in recommendedJobIDsUsingContent:
@@ -374,8 +372,7 @@ def recommendjobs(request):
                                         job['Summary'], applyLink))
             i=i+1;
 
-        db = connection.Jobs
-        jobs = db.jobsDetail
+        jobs = db.RatedJobsCollection
         for jobId in recommendedJobIDsUsingALS:
             if i==6:
                 break;
@@ -395,9 +392,7 @@ def findTopRatedJobs(request):
         topRatedJobs = recommendationAlgos.topRatedJobs()
         recommendedJobs = []
 
-        connection = MongoClient(port=27017)
-        db = connection.Jobs
-        jobs = db.jobsDetail
+        jobs = db.RatedJobsCollection
         i = 1
         for jobId in topRatedJobs:
             if i == 6:

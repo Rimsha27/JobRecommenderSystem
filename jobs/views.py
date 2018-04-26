@@ -24,7 +24,7 @@ def jobsviewing(request):
 
 # This Function Stores Implicit Feedback
 def displayingJobDetail(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
         global jobs
         connection = MongoClient(port=27017)
 
@@ -184,7 +184,7 @@ def displayingJobDetail(request):
         return render(request, 'Signinform.html')
 
 def jobsretrieving(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
         global jobs
         jobs = []
 
@@ -274,7 +274,7 @@ def jobsretrieving(request):
         return render(request, 'Signinform.html')
 
 def saveExplicitRating(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
         global jobs
         connection = MongoClient(port=27017)
         explicitFbDB = connection.ExplicitFeedback
@@ -343,7 +343,7 @@ def saveExplicitRating(request):
         return render(request, 'Signinform.html')
 
 def recommendjobs(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
         username = request.user.username
         UserRecord = models.signupModel.objects.filter(email=username)
         ID = UserRecord[0].idformongo
@@ -391,7 +391,7 @@ def recommendjobs(request):
         return render(request, 'Signinform.html')
 
 def findTopRatedJobs(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
         topRatedJobs = recommendationAlgos.topRatedJobs()
         recommendedJobs = []
 

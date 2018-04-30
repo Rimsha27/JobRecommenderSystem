@@ -164,6 +164,7 @@ def signup(request):
             listofpositions = request.POST.getlist('Position[]')
             listofstartdates = request.POST.getlist('startdates[]')
             listofenddates = request.POST.getlist('enddates[]')
+            listofDescription = request.POST.getlist('Descriptions[]')
 
             listofdegrees = request.POST.getlist('degreenames[]')
             listofinstitution = request.POST.getlist('institution[]')
@@ -178,6 +179,7 @@ def signup(request):
                                                           position=listofpositions[i],
                                                           startDate=listofstartdates[i],
                                                           endDate=listofenddates[i],
+                                                          feedbackforjob=listofDescription[i],
                                                           UserExperience=signUpModel)
                 ArrayContainingExperiencesObject.append(temp)
 
@@ -296,7 +298,7 @@ def updateinformation(request):
     flag = False
     flag1 = False
     if request.method == "POST":
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             username = request.user.username
             if username == request.POST['email']:
                 # Deleting the models from the signupModel,Django provided model
@@ -332,6 +334,9 @@ def updateinformation(request):
                 listofpositions = request.POST.getlist('Position[]')
                 listofstartdates = request.POST.getlist('startdates[]')
                 listofenddates = request.POST.getlist('enddates[]')
+                listofDescriptions = request.POST.getlist('Descriptions[]')
+
+
 
                 listofdegrees = request.POST.getlist('degreenames[]')
                 listofinstitution = request.POST.getlist('institution[]')
@@ -346,6 +351,7 @@ def updateinformation(request):
                                                               position=listofpositions[i],
                                                               startDate=listofstartdates[i],
                                                               endDate=listofenddates[i],
+                                                              feedbackforjob=listofDescriptions[i],
                                                               UserExperience=signUpModel)
                     ArrayContainingExperiencesObject.append(temp)
 
@@ -421,6 +427,8 @@ def updateinformation(request):
                     listofpositions = request.POST.getlist('Position[]')
                     listofstartdates = request.POST.getlist('startdates[]')
                     listofenddates = request.POST.getlist('enddates[]')
+                    listofDescriptions = request.POST.getlist('Descriptions')
+
 
                     listofdegrees = request.POST.getlist('degreenames[]')
                     listofinstitution = request.POST.getlist('institution[]')
@@ -435,6 +443,7 @@ def updateinformation(request):
                                                                   position=listofpositions[i],
                                                                   startDate=listofstartdates[i],
                                                                   endDate=listofenddates[i],
+                                                                  feedbackforjob=listofDescriptions[i],
                                                                   UserExperience=signUpModel)
                         ArrayContainingExperiencesObject.append(temp)
 

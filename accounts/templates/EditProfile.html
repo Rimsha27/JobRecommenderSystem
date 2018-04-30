@@ -242,7 +242,7 @@
     </div>
 </nav>
 
-{% if user.is_authenticated %}
+
 <!-- Page Header -->
 <header class="masthead" style="background-image: url('{% static 'img/home.jpg' %}">
     <div class="overlay"></div>
@@ -361,19 +361,16 @@
                                     </div>
 
                                     <div class="container2">
-                                        <div class="row2">
-                                            <div class="col-lg-3">
-                                                <div class="col-xs-10">
-
-                                                    {% for skills in Skills %}
+                                        {% for skills in Skills %}
+                                            <div class="row2">
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
                                                         <input type="text" class="form-control" name="skills[]"
                                                                value="{{ skills }}" required/>
-                                                    {% endfor %}
-
-
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        {% endfor %}
                                         <hr/>
                                     </div>
                                 </div>
@@ -395,19 +392,21 @@
                                     </div>
 
                                     <div class="container3">
-                                        <div class="row3">
-                                            <div class="col-lg-3 temp1" id="temp1">
+                                        {% for interest in Interests %}
+                                            <div class="row3">
+                                                <div class="col-lg-3 temp1" id="temp1">
 
-                                                {% for interest in Interests %}
+
                                                     <div class="col-xs-10">
                                                         <input id="{{ forloop.counter }}" type="text"
                                                                class="form-control " name="interests[]"
                                                                value="{{ interest }}" required/>
                                                     </div>
-                                                {% endfor %}
 
+
+                                                </div>
                                             </div>
-                                        </div>
+                                        {% endfor %}
                                         <hr/>
                                     </div>
 
@@ -426,10 +425,10 @@
                                     </div>
                                     <hr>
                                     <div class="container5">
-                                        <div class="row5">
+                                        {% for work in UserExperience.all %}
+                                            <div class="row5">
 
 
-                                            {% for work in UserExperience.all %}
                                                 <div class="col-lg-3">
                                                     <div class="col-xs-10">
                                                         <input type="text" class="form-control" name="Company[]"
@@ -458,10 +457,20 @@
                                                     </div>
                                                 </div>
 
-                                            {% endfor %}
+
+                                                <div class="col-lg-12">
+                                                    <div class="col-xs-10">
+                                                    <textarea name="Descriptions[]"
+                                                              style="width:250px;height:150px;font-size: 12px"
+                                                              id="desc" required>{{ work.feedbackforjob }}</textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        {% endfor %}
 
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -481,9 +490,8 @@
 
 
                                     <div class="container1">
-                                        <div class="row1">
-
-                                            {% for edu in UserEducation.all %}
+                                        {% for edu in UserEducation.all %}
+                                            <div class="row1">
                                                 <div class="col-lg-3">
                                                     <div class="col-xs-10">
                                                         <input type="text" class="form-control"
@@ -512,9 +520,10 @@
                                                                value="{{ edu.enddateedu }}" required/>
                                                     </div>
                                                 </div>
-                                            {% endfor %}
+                                            </div>
+                                        {% endfor %}
 
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -547,16 +556,15 @@
         </div>
     </div>
 </div>
-{% endif %}
 
 <script>
     // for Education
 
 
-    var $container = $('.container5');
-    var $row = $('.row5');
-    var $add = $('#addButton');
-    var $remove = $('#removeButton');
+    var $container = $('.container5').eq(0);
+    var $row = $('.row5').eq(0);
+    var $add = $('#addButton').eq(0);
+    var $remove = $('#removeButton').eq(0);
     var $focused;
 
     $container.on('click', 'input', function () {
@@ -587,10 +595,10 @@
     });
 
     // for work experiences
-    var $container1 = $('.container1');
-    var $row1 = $('.row1');
-    var $addedu = $('#addEducation');
-    var $removeedu = $('#removeEducation');
+    var $container1 = $('.container1').eq(0);
+    var $row1 = $('.row1').eq(0);
+    var $addedu = $('#addEducation').eq(0);
+    var $removeedu = $('#removeEducation').eq(0);
 
 
     $container1.on('click', 'input', function () {
@@ -624,10 +632,10 @@
 
     // for skills
 
-    var $container2 = $('.container2');
-    var $row2 = $('.row2');
-    var $addskill = $('#addskill');
-    var $removeskill = $('#removeskill');
+    var $container2 = $('.container2').eq(0);
+    var $row2 = $('.row2').eq(0);
+    var $addskill = $('#addskill').eq(0);
+    var $removeskill = $('#removeskill').eq(0);
 
 
     $container2.on('click', 'input', function () {
@@ -660,9 +668,9 @@
 
     // for interest
 
-    var $container3 = $('.container3');
-    var $row3 = $('.row3');
-    var $addinterest = $('#addinterest');
+    var $container3 = $('.container3').eq(0);
+    var $row3 = $('.row3').eq(0);
+    var $addinterest = $('#addinterest').eq(0);
 
     var $temp = $('.temp');
 

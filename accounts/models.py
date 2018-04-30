@@ -24,6 +24,7 @@ class workexperienceModel(models.Model):
     position = models.CharField(max_length=100)
     startDate = models.CharField(max_length=100)
     endDate = models.CharField(max_length=100)
+    feedbackforjob = models.CharField(max_length=100, null=True)
     UserExperience = models.ForeignKey(signupModel, on_delete=models.CASCADE)
 
 

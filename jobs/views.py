@@ -346,8 +346,10 @@ def saveExplicitRating(request):
         jobId = int(Number[2])
 
         jobToBeStored = jobs[jobId - 1]
+        print(jobToBeStored.jobTitle)
         jobTitle = jobToBeStored.jobTitle
         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
+        print(jobsData['userassignedId'])
         jobId = jobsData['userassignedId']
 
         # jobsData = jobDetailsCollection.find_one({"userassignedId": jobId})

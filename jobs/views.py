@@ -55,11 +55,10 @@ def displayingJobDetail(request):
         # jobType = jobType[1]
         # print(jobType)
 
-        print(jobId)
+        print("The job to be saved", jobId)
         for job in jobs:
-            print(job.id)
+            print("The available job id", job.id)
         jobToBeStored = jobs[jobId - 1]
-        print(jobToBeStored.id)
         print(jobToBeStored.jobTitle)
 
         if jobDetailsCollection.count() == 0:
@@ -82,7 +81,7 @@ def displayingJobDetail(request):
             jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
             if jobsData is not None:
                 jobId = jobsData['userassignedId']
-                print("Job is already stored in Job Rated Database")
+                print("Job is already stored in Job Rated Database", jobId)
             else:
                 print("Job is not stored in Job Rated Database")
                 no_of_documents = jobDetailsCollection.count();

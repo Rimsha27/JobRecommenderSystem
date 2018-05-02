@@ -56,6 +56,8 @@ def displayingJobDetail(request):
         # print(jobType)
 
         print(jobId)
+        for job in jobs:
+            print(job.id)
         jobToBeStored = jobs[jobId - 1]
         print(jobToBeStored.id)
         print(jobToBeStored.jobTitle)

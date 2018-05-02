@@ -345,6 +345,7 @@ def saveExplicitRating(request):
 
         jobId = int(Number[2])
 
+        print(jobId)
         jobToBeStored = jobs[jobId - 1]
         print(jobToBeStored.jobTitle)
         jobTitle = jobToBeStored.jobTitle

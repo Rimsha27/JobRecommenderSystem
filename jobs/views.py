@@ -73,7 +73,7 @@ def displayingJobDetail(request):
                 'JobSummary': jobToBeStored.jobSummary,
                 'JobApplyLink': jobToBeStored.jobLink,
             }
-            result = jobDetailsCollection.insert_one(Job)
+            # result = jobDetailsCollection.insert_one(Job)
             print("Job inserted and job id is ", jobId)
         else:
             print("Job Rated Database is not empty")
@@ -95,7 +95,7 @@ def displayingJobDetail(request):
                     'JobSummary': jobToBeStored.jobSummary,
                     'JobApplyLink': jobToBeStored.jobLink,
                 }
-                result = jobDetailsCollection.insert_one(Job)
+                # result = jobDetailsCollection.insert_one(Job)
                 print("Job inserted and job id is ", jobId)
 
         #there is no job in Jobs Database
@@ -212,7 +212,7 @@ def displayingJobDetail(request):
                 'Jobid': jobId,
                 'ImplicitRating': implicit_feedback_count
             }
-            result = implicitFbCollection.insert_one(Feedback)
+            # result = implicitFbCollection.insert_one(Feedback)
             print("Feedback saved.")
         #f he had
         else:
@@ -220,12 +220,12 @@ def displayingJobDetail(request):
             # So increasing the previous count Would do the job
             # Incrementing the Job Implicit Rating
             print("The user has rated the job before!")
-            implicitFbCollection.update(
-                {'Userid': UserRecord[0].idformongo, 'Jobid': jobId},
-                {
-                    "$inc": {"ImplicitRating": 1}
-                }
-            )
+            # implicitFbCollection.update(
+            #     {'Userid': UserRecord[0].idformongo, 'Jobid': jobId},
+            #     {
+            #         "$inc": {"ImplicitRating": 1}
+            #     }
+            # )
             print("Feedback updated.")
         return render(request, 'jobsDetail.html', {"jobsDetail": jobToBeStored})
     else:
@@ -385,15 +385,15 @@ def saveExplicitRating(request):
                 'Jobid': jobId,
                 'ExplicitRating': Number[1]
             }
-            result = ExplicitFbCollection.insert_one(Feedback)
+            # result = ExplicitFbCollection.insert_one(Feedback)
             print("Feedback Saved")
         #If he had, update the rating
         else:
             print("The user has rated the job")
-            ExplicitFbCollection.update(
-                {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
-                {"$set": {"ExplicitRating": Number[1]}}
-            )
+            # ExplicitFbCollection.update(
+            #     {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
+            #     {"$set": {"ExplicitRating": Number[1]}}
+            # )
             print("Feedback Updated")
         return render(request, 'jobs.html', {"jobList": jobs})
     else:

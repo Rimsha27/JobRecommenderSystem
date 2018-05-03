@@ -268,14 +268,14 @@ def jobsretrieving(request):
 
                     id_temp = j
 
-                    print("JobID", id_temp)
+                    # print("JobID", id_temp)
 
                     jobTitle = jobSoup.find("b", {"class": "jobtitle"})
                     jobData = jobTitle.text
 
                     jobTitle_temp = jobTitle.text
 
-                    print("JobTitle", jobTitle_temp)
+                    # print("JobTitle", jobTitle_temp)
 
                     jobCompany = jobSoup.find("span", {"class": "company"})
 
@@ -283,7 +283,7 @@ def jobsretrieving(request):
                         jobData = jobData + " " + jobCompany.text
                         jobCompany_temp = jobCompany.text
 
-                        print(jobCompany_temp)
+                        # print(jobCompany_temp)
 
                     jobLocation = jobSoup.find("span", {"class": "location"})
 
@@ -291,20 +291,20 @@ def jobsretrieving(request):
                         jobData = jobData + " " + jobLocation.text
                         jobLocation_temp = jobLocation.text
 
-                        print(jobLocation_temp)
+                        # print(jobLocation_temp)
 
                     jobSalary = jobSoup.find("span", {"class": "no-wrap"})
                     if jobSalary:
                         jobData = jobData + " " + jobSalary.text
                         jobSalary_temp = jobSalary.text
 
-                        print(jobSummary_temp)
+                        # print(jobSummary_temp)
 
                     jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
                     if jobApplyLink:
                         jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
                         jobLink_temp = jobApplyLink
-                        print(jobApplyLink)
+                        # print(jobApplyLink)
 
                     jobSummary = jobSoup.find("span", {"class": "summary"})
                     if jobSummary:
@@ -315,8 +315,12 @@ def jobsretrieving(request):
 
                     jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
                                      jobSummary_temp, jobLink_temp))
-                    print(id_temp)
+                    # print(id_temp)
                     j += 1
+        for job in jobs:
+            print(job.id)
+            print(jobs.jobTitle)
+            print(jobs.jobCompany)
         return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
     else:
         return render(request, 'Signinform.html')

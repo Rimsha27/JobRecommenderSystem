@@ -35,7 +35,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'kom92$739764dfv*hd2smqtd0f93142-7vu13-2^=8fy!=qtu!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['sparkjobrecommendersystem.herokuapp.com']
 

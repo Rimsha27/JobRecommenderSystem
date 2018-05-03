@@ -319,8 +319,8 @@ def jobsretrieving(request):
                     j += 1
         for job in jobs:
             print(job.id)
-            print(jobs.jobTitle)
-            print(jobs.jobCompany)
+            print(job.jobTitle)
+            print(job.jobCompany)
         return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
     else:
         return render(request, 'Signinform.html')

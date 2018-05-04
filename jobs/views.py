@@ -4,6 +4,7 @@ from django.shortcuts import render
 from pymongo import MongoClient
 from accounts import models
 from . import recommendationAlgos
+import asyncio
 
 jobs = []
 _MONGODB_USER = "hjrsfyp"
@@ -231,7 +232,8 @@ def displayingJobDetail(request):
     else:
         return render(request, 'Signinform.html')
 
-def retrieveJobs(request):
+
+async def retrieveJobs(request):
     global jobs
     jobs = []
 
@@ -319,8 +321,12 @@ def retrieveJobs(request):
 
 def jobsretrieving(request):
     if request.user.is_authenticated:
-        retrieveJobs(request);
-        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        # Blocking call which returns when the scrapper has retrieved all the jobs
+        loop.run_until_complete(retrieveJobs(request))
+        loop.close()
         global jobs
         for job in jobs:
             print(job.id)

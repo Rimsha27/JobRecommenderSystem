@@ -231,92 +231,97 @@ def displayingJobDetail(request):
     else:
         return render(request, 'Signinform.html')
 
+def retrieveJobs(request):
+    global jobs
+    jobs = []
+
+    id_temp = ""
+    jobTitle_temp = ""
+    jobCompany_temp = ""
+    jobLocation_temp = ""
+    jobSalary_temp = ""
+    jobSummary_temp = ""
+    jobLink_temp = ""
+
+    desc = "web"
+    loc = ""
+    j = 1
+    start = 0
+
+    while start is not 20:
+        r = requests.get("https://www.indeed.com/jobs?q=" + request.POST['keyword'] + "&l=" + request.POST[
+            'location'] + "&start=" + str(start),
+                         proxies={"http": "http://61.233.25.166:80"})
+        start += 10
+        data = r.text
+        soup = BeautifulSoup(data, 'lxml')
+        soup = soup.findAll("a", {"class": "turnstileLink"})
+
+        for link in soup:
+            jobLink = link.get("href")
+            if "clk" in jobLink:
+                jobRequest = requests.get("https://www.indeed.com" + jobLink,
+                                          proxies={"http": "http://61.233.25.166:80"})
+                jobData = jobRequest.text
+                jobSoup = BeautifulSoup(jobData, 'lxml')
+
+                id_temp = j
+
+                # print("JobID", id_temp)
+
+                jobTitle = jobSoup.find("b", {"class": "jobtitle"})
+                jobData = jobTitle.text
+
+                jobTitle_temp = jobTitle.text
+
+                # print("JobTitle", jobTitle_temp)
+
+                jobCompany = jobSoup.find("span", {"class": "company"})
+
+                if jobCompany:
+                    jobData = jobData + " " + jobCompany.text
+                    jobCompany_temp = jobCompany.text
+
+                    # print(jobCompany_temp)
+
+                jobLocation = jobSoup.find("span", {"class": "location"})
+
+                if jobLocation:
+                    jobData = jobData + " " + jobLocation.text
+                    jobLocation_temp = jobLocation.text
+
+                    # print(jobLocation_temp)
+
+                jobSalary = jobSoup.find("span", {"class": "no-wrap"})
+                if jobSalary:
+                    jobData = jobData + " " + jobSalary.text
+                    jobSalary_temp = jobSalary.text
+
+                    # print(jobSummary_temp)
+
+                jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
+                if jobApplyLink:
+                    jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
+                    jobLink_temp = jobApplyLink
+                    # print(jobApplyLink)
+
+                jobSummary = jobSoup.find("span", {"class": "summary"})
+                if jobSummary:
+                    jobData = jobData + " " + jobSummary.text
+                    jobSummary_temp = jobSummary.text
+
+                    # print(jobSummary_temp)
+
+                jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
+                                 jobSummary_temp, jobLink_temp))
+                # print(id_temp)
+                j += 1
+
 def jobsretrieving(request):
     if request.user.is_authenticated:
+        retrieveJobs(request);
+        
         global jobs
-        jobs = []
-
-        id_temp = ""
-        jobTitle_temp = ""
-        jobCompany_temp = ""
-        jobLocation_temp = ""
-        jobSalary_temp = ""
-        jobSummary_temp = ""
-        jobLink_temp = ""
-
-        desc = "web"
-        loc = ""
-        j = 1
-        start = 0
-
-        while start is not 20:
-            r = requests.get("https://www.indeed.com/jobs?q=" + request.POST['keyword'] + "&l=" + request.POST[
-                'location'] + "&start=" + str(start),
-                             proxies={"http": "http://61.233.25.166:80"})
-            start += 10
-            data = r.text
-            soup = BeautifulSoup(data, 'lxml')
-            soup = soup.findAll("a", {"class": "turnstileLink"})
-
-            for link in soup:
-                jobLink = link.get("href")
-                if "clk" in jobLink:
-                    jobRequest = requests.get("https://www.indeed.com" + jobLink,
-                                              proxies={"http": "http://61.233.25.166:80"})
-                    jobData = jobRequest.text
-                    jobSoup = BeautifulSoup(jobData, 'lxml')
-
-                    id_temp = j
-
-                    # print("JobID", id_temp)
-
-                    jobTitle = jobSoup.find("b", {"class": "jobtitle"})
-                    jobData = jobTitle.text
-
-                    jobTitle_temp = jobTitle.text
-
-                    # print("JobTitle", jobTitle_temp)
-
-                    jobCompany = jobSoup.find("span", {"class": "company"})
-
-                    if jobCompany:
-                        jobData = jobData + " " + jobCompany.text
-                        jobCompany_temp = jobCompany.text
-
-                        # print(jobCompany_temp)
-
-                    jobLocation = jobSoup.find("span", {"class": "location"})
-
-                    if jobLocation:
-                        jobData = jobData + " " + jobLocation.text
-                        jobLocation_temp = jobLocation.text
-
-                        # print(jobLocation_temp)
-
-                    jobSalary = jobSoup.find("span", {"class": "no-wrap"})
-                    if jobSalary:
-                        jobData = jobData + " " + jobSalary.text
-                        jobSalary_temp = jobSalary.text
-
-                        # print(jobSummary_temp)
-
-                    jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
-                    if jobApplyLink:
-                        jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
-                        jobLink_temp = jobApplyLink
-                        # print(jobApplyLink)
-
-                    jobSummary = jobSoup.find("span", {"class": "summary"})
-                    if jobSummary:
-                        jobData = jobData + " " + jobSummary.text
-                        jobSummary_temp = jobSummary.text
-
-                        # print(jobSummary_temp)
-
-                    jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
-                                     jobSummary_temp, jobLink_temp))
-                    # print(id_temp)
-                    j += 1
         for job in jobs:
             print(job.id)
             print(job.jobTitle)

@@ -267,57 +267,54 @@ async def retrieveJobs(request):
                 jobData = jobRequest.text
                 jobSoup = BeautifulSoup(jobData, 'lxml')
 
-                id_temp = j
-
-                # print("JobID", id_temp)
-
                 jobTitle = jobSoup.find("b", {"class": "jobtitle"})
-                jobData = jobTitle.text
+                if jobTitle is not None:
+                    jobData = jobTitle.text
 
-                jobTitle_temp = jobTitle.text
+                    jobTitle_temp = jobTitle.text
 
-                # print("JobTitle", jobTitle_temp)
+                    # print("JobTitle", jobTitle_temp)
 
-                jobCompany = jobSoup.find("span", {"class": "company"})
+                    jobCompany = jobSoup.find("span", {"class": "company"})
 
-                if jobCompany:
-                    jobData = jobData + " " + jobCompany.text
-                    jobCompany_temp = jobCompany.text
+                    if jobCompany:
+                        jobData = jobData + " " + jobCompany.text
+                        jobCompany_temp = jobCompany.text
 
-                    # print(jobCompany_temp)
+                        # print(jobCompany_temp)
 
-                jobLocation = jobSoup.find("span", {"class": "location"})
+                    jobLocation = jobSoup.find("span", {"class": "location"})
 
-                if jobLocation:
-                    jobData = jobData + " " + jobLocation.text
-                    jobLocation_temp = jobLocation.text
+                    if jobLocation:
+                        jobData = jobData + " " + jobLocation.text
+                        jobLocation_temp = jobLocation.text
 
-                    # print(jobLocation_temp)
+                        # print(jobLocation_temp)
 
-                jobSalary = jobSoup.find("span", {"class": "no-wrap"})
-                if jobSalary:
-                    jobData = jobData + " " + jobSalary.text
-                    jobSalary_temp = jobSalary.text
+                    jobSalary = jobSoup.find("span", {"class": "no-wrap"})
+                    if jobSalary:
+                        jobData = jobData + " " + jobSalary.text
+                        jobSalary_temp = jobSalary.text
 
-                    # print(jobSummary_temp)
+                        # print(jobSummary_temp)
 
-                jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
-                if jobApplyLink:
-                    jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
-                    jobLink_temp = jobApplyLink
-                    # print(jobApplyLink)
+                    jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
+                    if jobApplyLink:
+                        jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
+                        jobLink_temp = jobApplyLink
+                        # print(jobApplyLink)
 
-                jobSummary = jobSoup.find("span", {"class": "summary"})
-                if jobSummary:
-                    jobData = jobData + " " + jobSummary.text
-                    jobSummary_temp = jobSummary.text
+                    jobSummary = jobSoup.find("span", {"class": "summary"})
+                    if jobSummary:
+                        jobData = jobData + " " + jobSummary.text
+                        jobSummary_temp = jobSummary.text
 
-                    # print(jobSummary_temp)
-
-                jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
-                                 jobSummary_temp, jobLink_temp))
-                # print(id_temp)
-                j += 1
+                        # print(jobSummary_temp)
+                    id_temp = j
+                    jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
+                                     jobSummary_temp, jobLink_temp))
+                    # print(id_temp)
+                    j += 1
 
 def jobsretrieving(request):
     if request.user.is_authenticated:
@@ -478,5 +475,12 @@ def findTopRatedJobs(request):
 
         return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
 
+    else:
+        return render(request, 'Signinform.html')
+
+def backButton(request):
+    if request.user.is_authenticated:
+        global jobs
+        return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
     else:
         return render(request, 'Signinform.html')

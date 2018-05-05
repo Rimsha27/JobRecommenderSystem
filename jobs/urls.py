@@ -9,6 +9,6 @@ urlpatterns = [
     url(r'^recommendedjobs/', views.recommendjobs, name="recommendjobs"),
     url(r'^jobsDetails/',views.displayingJobDetail,name = "jobsdisplay"),
     url(r'^savedJobsRatings',views.saveExplicitRating,name = "saveExplicitRating"),
-    url(r'^findTopRatedJobs',views.findTopRatedJobs,name = "topratedjobs")
-
+    url(r'^findTopRatedJobs',views.findTopRatedJobs,name = "topratedjobs"),
+    url(r'^backButton',views.backButton,name = "backButton")
 ]

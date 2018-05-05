@@ -170,7 +170,7 @@
 
                     <li class="dropdown">
                         <a class="dropdown-toggle navbar-brand" data-toggle="dropdown" href=""
-                           style="text-decoration: none;color: #ffffff;font-size: large">Settings
+                           style="text-decoration: none;color: black;font-size: large">Settings
 
 
                         </a>
@@ -225,31 +225,30 @@
     </div>
 </nav>
 
-
 {% if user.is_authenticated %}
+    <header class="masthead">
+    </header>
 <!-- Page Header -->
-<header class="masthead" style="background-image: url('{% static 'img/home.jpg' %}')">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <div class="site-heading">
-                    <h1>Jobs For you</h1>
-                    <span class="subheading">Here the jobs for you</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
+{#<header class="masthead" style="background-image: url('{% static 'img/home.jpg' %}')">#}
+{#    <div class="overlay"></div>#}
+{#    <div class="container">#}
+{#        <div class="row">#}
+{#            <div class="col-lg-8 col-md-10 mx-auto">#}
+{#                <div class="site-heading">#}
+{#                    <h1>Jobs For you</h1>#}
+{#                    <span class="subheading">Here the jobs for you</span>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</header>#}
 
-<body>
 <h1 align="center">Job Postings</h1>
 {% if error %}
     <p style="color: red">{{ error }}</p>
     <br/>
     <br/>
 {% endif %}
-
 
 <!--form style="margin-left: 43%" action="{% url 'jobs:recommendjobs'%}" method="post">
     {% csrf_token %}

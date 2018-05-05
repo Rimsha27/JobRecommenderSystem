@@ -65,7 +65,7 @@
 
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
@@ -257,7 +257,7 @@
 
                     <li class="dropdown">
                         <a class="dropdown-toggle navbar-brand" data-toggle="dropdown" href=""
-                           style="text-decoration: none;color: #ffffff;font-size: large">Settings
+                           style="text-decoration: none;color: black;font-size: large">Settings
 
 
                         </a>
@@ -315,20 +315,17 @@
 
 {% if user.is_authenticated %}
 <!-- Page Header -->
-<header class="masthead" style="background-image: url('{% static 'img/home.jpg' %}">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                <div class="site-heading">
-                    <h1>Jobs Detail</h1>
-                    <span class="subheading">Jobs Details for</span>
-                </div>
-            </div>
-        </div>
-    </div>
+<header class="masthead">
 </header>
 
+<form id="backButton" action="{% url 'jobs:backButton' %}" method="post">
+{% csrf_token %}
+
+    <button style="font-size:24px; margin-left:20px"><i class="fa fa-angle-left"></i></button>
+
+</form>
+
+    <h1 align="center">Job Details</h1>
 
 <form id="JobsDetailForm" action="{% url 'jobs:saveExplicitRating' %}" method="post" class="form-horizontal"
       style="margin-top: 30px">

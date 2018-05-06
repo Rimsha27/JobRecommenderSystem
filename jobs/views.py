@@ -4,9 +4,7 @@ from django.shortcuts import render
 from pymongo import MongoClient
 from accounts import models
 from . import recommendationAlgos
-import asyncio
 
-jobs = []
 _MONGODB_USER = "hjrsfyp"
 _MONGODB_PASSWD = "123456"
 _MONGODB_HOST = "ds259089.mlab.com:59089"
@@ -26,22 +24,29 @@ class Jobs(object):
         self.jobSummary = jobSummary
         self.jobLink = jobLink
 
+    def as_json(self):
+        return dict(id=self.id,
+            jobTitle=self.jobTitle,
+            jobCompany=self.jobCompany,
+            jobLocation=self.jobLocation,
+            jobSalary=self.jobSalary,
+            jobSummary=self.jobSummary,
+            jobLink=self.jobLink)
 
+#This is called after successful Sign in or Sign up
 def jobsviewing(request):
     return render(request, 'jobs.html')
 
-# This Function Stores Implicit Feedback
+#This function displays a job detail and stores the click on read more as implicit feedback
 def displayingJobDetail(request):
     if request.user.is_authenticated:
-        global jobs
+        jobs = request.session.get('jobs', None)
         implicitFbCollection = db.ImplicitFeedbackCollection
 
         jobDetailsCollection = db.RatedJobsCollection
-        # storedJobsCollection = db.StoredJobsCollection
 
         # Here I will first get the Job id from the Hidden Text Box
         jobId = [key for key in request.POST if key.startswith("jobId")]
-        # jobType = [key for key in request.POST if key.startswith("jobType")]
 
         # Getting the username
         username = request.user.username
@@ -52,34 +57,31 @@ def displayingJobDetail(request):
         # Getting the Job
         jobId = jobId[0].split("+")
         jobId = int(jobId[1])
-        # jobType = jobType[0].split("+")
-        # jobType = jobType[1]
-        # print(jobType)
 
         print("The job to be saved", jobId)
         for job in jobs:
-            print("The available job id", job.id)
+            print("The available job id", job['id'])
         jobToBeStored = jobs[jobId - 1]
-        print(jobToBeStored.jobTitle)
 
         if jobDetailsCollection.count() == 0:
             print("Job Rated Database is empty")
             jobId = 15001
             Job = {
                 'userassignedId': jobId,
-                'JobTitle': jobToBeStored.jobTitle,
-                'JobCompany': jobToBeStored.jobCompany,
-                'JobLocation': jobToBeStored.jobLocation,
-                'JobSalary': jobToBeStored.jobSalary,
-                'JobSummary': jobToBeStored.jobSummary,
-                'JobApplyLink': jobToBeStored.jobLink,
+                'JobTitle': jobToBeStored['jobTitle'],
+                'JobCompany': jobToBeStored['jobCompany'],
+                'JobLocation': jobToBeStored['jobLocation'],
+                'JobSalary': jobToBeStored['jobSalary'],
+                'JobSummary': jobToBeStored['jobSummary'],
+                'JobApplyLink': jobToBeStored['jobLink'],
             }
-            # result = jobDetailsCollection.insert_one(Job)
+            result = jobDetailsCollection.insert_one(Job)
             print("Job inserted and job id is ", jobId)
         else:
             print("Job Rated Database is not empty")
+
             # This covers the scenario when a user has clicked a searched job and then he again searches and the same job appers, the jobId will be local so we are searching on job title
-            jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
+            jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored['jobTitle']})
             if jobsData is not None:
                 jobId = jobsData['userassignedId']
                 print("Job is already stored in Job Rated Database", jobId)
@@ -89,118 +91,15 @@ def displayingJobDetail(request):
                 jobId = 15000 + no_of_documents + 1
                 Job = {
                     'userassignedId': jobId,
-                    'JobTitle': jobToBeStored.jobTitle,
-                    'JobCompany': jobToBeStored.jobCompany,
-                    'JobLocation': jobToBeStored.jobLocation,
-                    'JobSalary': jobToBeStored.jobSalary,
-                    'JobSummary': jobToBeStored.jobSummary,
-                    'JobApplyLink': jobToBeStored.jobLink,
+                    'JobTitle': jobToBeStored['jobTitle'],
+                    'JobCompany': jobToBeStored['jobCompany'],
+                    'JobLocation': jobToBeStored['jobLocation'],
+                    'JobSalary': jobToBeStored['jobSalary'],
+                    'JobSummary': jobToBeStored['jobSummary'],
+                    'JobApplyLink': jobToBeStored['jobLink'],
                 }
-                # result = jobDetailsCollection.insert_one(Job)
+                result = jobDetailsCollection.insert_one(Job)
                 print("Job inserted and job id is ", jobId)
-
-        #there is no job in Jobs Database
-        # if jobDetailsCollection.count() == 0:
-        #     print("Job Rated Database is empty")
-        #     if jobType == "False":
-        #         print("The job is the searched job")
-        #         jobToBeStored = jobs[jobId - 1]
-        #     else:
-        #         print("The job is the stored job")
-        #         jobsData = storedJobsCollection.find_one({"ID": jobId})
-        #         try:
-        #             salary = jobsData.Salary
-        #         except:
-        #             salary = ""
-        #         try:
-        #             applyLink = jobsData.ApplyLink
-        #         except:
-        #             applyLink = ""
-        #         jobToBeStored = Jobs(jobsData['ID'], jobsData['Title'], jobsData['Company'], jobsData['Location'],
-        #                              salary, jobsData['Summary'], applyLink)
-        #     jobId = 15001
-        #     Job = {
-        #         'userassignedId': jobId,
-        #         'JobTitle': jobToBeStored.jobTitle,
-        #         'JobCompany': jobToBeStored.jobCompany,
-        #         'JobLocation': jobToBeStored.jobLocation,
-        #         'JobSalary': jobToBeStored.jobSalary,
-        #         'JobSummary': jobToBeStored.jobSummary,
-        #         'JobApplyLink': jobToBeStored.jobLink,
-        #     }
-        #     result = jobDetailsCollection.insert_one(Job)
-        #     print("inserted")
-        #
-        # #Jobs Database is not empty
-        # else:
-        #     # check if the job already exists or not
-        #     print("Job collection is not empty")
-        #     print(jobId)
-        #     jobsData = jobDetailsCollection.find_one({"userassignedId": jobId})
-        #     print(jobsData)
-        #
-        #     #If does not exists, retrieve the number of jobs and assign count+1 as jobId
-        #     if jobsData is None:
-        #         if jobType == "False":
-        #             print("The job is the searched job")
-        #             jobToBeStored = jobs[jobId - 1]
-        #             jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
-        #
-        #             #This covers the scenario when a user has clicked a searched job and then he again searches and the same job appers, the jobId will be local so we are searching on job title
-        #             if jobsData is not None:
-        #                 jobId = jobsData['userassignedId']
-        #             else:
-        #                 no_of_documents = jobDetailsCollection.count();
-        #                 jobId = 15000 + no_of_documents + 1
-        #                 Job = {
-        #                     'userassignedId': jobId,
-        #                     'JobTitle': jobToBeStored.jobTitle,
-        #                     'JobCompany': jobToBeStored.jobCompany,
-        #                     'JobLocation': jobToBeStored.jobLocation,
-        #                     'JobSalary': jobToBeStored.jobSalary,
-        #                     'JobSummary': jobToBeStored.jobSummary,
-        #                     'JobApplyLink': jobToBeStored.jobLink,
-        #                 }
-        #                 result = jobDetailsCollection.insert_one(Job)
-        #                 print("inserted")
-        #         else:
-        #             print("The job is the stored job")
-        #             jobsData = storedJobsCollection.find_one({"ID": jobId})
-        #             try:
-        #                 salary = jobsData.Salary
-        #             except:
-        #                 salary = ""
-        #             try:
-        #                 applyLink = jobsData.ApplyLink
-        #             except:
-        #                 applyLink = ""
-        #             jobToBeStored = Jobs(jobsData['ID'], jobsData['Title'], jobsData['Company'], jobsData['Location'],
-        #                                  salary,
-        #                                  jobsData['Summary'], applyLink)
-        #             jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
-        #
-        #             # This covers the scenario when a user has clicked a recommended job(from CBR) and then he again clicks, its id will be the one from storedJobs so we'll search based on jobTitle
-        #             if jobsData is not None:
-        #                 jobId = jobsData['userassignedId']
-        #             else:
-        #                 no_of_documents = jobDetailsCollection.count();
-        #                 jobId = 15000 + no_of_documents + 1
-        #                 Job = {
-        #                     'userassignedId': jobId,
-        #                     'JobTitle': jobToBeStored.jobTitle,
-        #                     'JobCompany': jobToBeStored.jobCompany,
-        #                     'JobLocation': jobToBeStored.jobLocation,
-        #                     'JobSalary': jobToBeStored.jobSalary,
-        #                     'JobSummary': jobToBeStored.jobSummary,
-        #                     'JobApplyLink': jobToBeStored.jobLink,
-        #                 }
-        #                 result = jobDetailsCollection.insert_one(Job)
-        #                 print("inserted")
-        #     else:
-        #         jobId = jobsData['userassignedId']
-        #         jobToBeStored = Jobs(jobsData['userassignedId'], jobsData['JobTitle'], jobsData['JobCompany'], jobsData['JobLocation'],
-        #                              jobsData['JobSalary'], jobsData['JobSummary'], jobsData['JobApplyLink'])
-        #
 
         #If the user has rated the job before
         feed_back_of_user = implicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
@@ -213,7 +112,7 @@ def displayingJobDetail(request):
                 'Jobid': jobId,
                 'ImplicitRating': implicit_feedback_count
             }
-            # result = implicitFbCollection.insert_one(Feedback)
+            result = implicitFbCollection.insert_one(Feedback)
             print("Feedback saved.")
         #f he had
         else:
@@ -221,130 +120,105 @@ def displayingJobDetail(request):
             # So increasing the previous count Would do the job
             # Incrementing the Job Implicit Rating
             print("The user has rated the job before!")
-            # implicitFbCollection.update(
-            #     {'Userid': UserRecord[0].idformongo, 'Jobid': jobId},
-            #     {
-            #         "$inc": {"ImplicitRating": 1}
-            #     }
-            # )
+            implicitFbCollection.update(
+                {'Userid': UserRecord[0].idformongo, 'Jobid': jobId},
+                {
+                    "$inc": {"ImplicitRating": 1}
+                }
+            )
             print("Feedback updated.")
         return render(request, 'jobsDetail.html', {"jobsDetail": jobToBeStored})
     else:
         return render(request, 'Signinform.html')
 
-
-async def retrieveJobs(request):
-    global jobs
-    jobs = []
-
-    id_temp = ""
-    jobTitle_temp = ""
-    jobCompany_temp = ""
-    jobLocation_temp = ""
-    jobSalary_temp = ""
-    jobSummary_temp = ""
-    jobLink_temp = ""
-
-    desc = "web"
-    loc = ""
-    j = 1
-    start = 0
-
-    while start is not 20:
-        r = requests.get("https://www.indeed.com/jobs?q=" + request.POST['keyword'] + "&l=" + request.POST[
-            'location'] + "&start=" + str(start),
-                         proxies={"http": "http://61.233.25.166:80"})
-        start += 10
-        data = r.text
-        soup = BeautifulSoup(data, 'lxml')
-        soup = soup.findAll("a", {"class": "turnstileLink"})
-
-        for link in soup:
-            jobLink = link.get("href")
-            if "clk" in jobLink:
-                jobRequest = requests.get("https://www.indeed.com" + jobLink,
-                                          proxies={"http": "http://61.233.25.166:80"})
-                jobData = jobRequest.text
-                jobSoup = BeautifulSoup(jobData, 'lxml')
-
-                jobTitle = jobSoup.find("b", {"class": "jobtitle"})
-                if jobTitle is not None:
-                    jobData = jobTitle.text
-
-                    jobTitle_temp = jobTitle.text
-
-                    # print("JobTitle", jobTitle_temp)
-
-                    jobCompany = jobSoup.find("span", {"class": "company"})
-
-                    if jobCompany:
-                        jobData = jobData + " " + jobCompany.text
-                        jobCompany_temp = jobCompany.text
-
-                        # print(jobCompany_temp)
-
-                    jobLocation = jobSoup.find("span", {"class": "location"})
-
-                    if jobLocation:
-                        jobData = jobData + " " + jobLocation.text
-                        jobLocation_temp = jobLocation.text
-
-                        # print(jobLocation_temp)
-
-                    jobSalary = jobSoup.find("span", {"class": "no-wrap"})
-                    if jobSalary:
-                        jobData = jobData + " " + jobSalary.text
-                        jobSalary_temp = jobSalary.text
-
-                        # print(jobSummary_temp)
-
-                    jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
-                    if jobApplyLink:
-                        jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
-                        jobLink_temp = jobApplyLink
-                        # print(jobApplyLink)
-
-                    jobSummary = jobSoup.find("span", {"class": "summary"})
-                    if jobSummary:
-                        jobData = jobData + " " + jobSummary.text
-                        jobSummary_temp = jobSummary.text
-
-                        # print(jobSummary_temp)
-                    id_temp = j
-                    jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
-                                     jobSummary_temp, jobLink_temp))
-                    # print(id_temp)
-                    j += 1
-
+#It retrieves the job based on keyword and location and shows them to the user
 def jobsretrieving(request):
     if request.user.is_authenticated:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        jobs = []
 
-        # Blocking call which returns when the scrapper has retrieved all the jobs
-        loop.run_until_complete(retrieveJobs(request))
-        loop.close()
-        global jobs
-        for job in jobs:
-            print(job.id)
-            print(job.jobTitle)
-            print(job.jobCompany)
+        id_temp = ""
+        jobTitle_temp = ""
+        jobCompany_temp = ""
+        jobLocation_temp = ""
+        jobSalary_temp = ""
+        jobSummary_temp = ""
+        jobLink_temp = ""
+
+        desc = "web"
+        loc = ""
+        j = 1
+        start = 0
+
+        while start is not 20:
+            r = requests.get("https://www.indeed.com/jobs?q=" + request.POST['keyword'] + "&l=" + request.POST[
+                'location'] + "&start=" + str(start),
+                             proxies={"http": "http://61.233.25.166:80"})
+            start += 10
+            data = r.text
+            soup = BeautifulSoup(data, 'lxml')
+            soup = soup.findAll("a", {"class": "turnstileLink"})
+
+            for link in soup:
+                jobLink = link.get("href")
+                if "clk" in jobLink:
+                    jobRequest = requests.get("https://www.indeed.com" + jobLink,
+                                              proxies={"http": "http://61.233.25.166:80"})
+                    jobData = jobRequest.text
+                    jobSoup = BeautifulSoup(jobData, 'lxml')
+
+                    jobTitle = jobSoup.find("b", {"class": "jobtitle"})
+                    if jobTitle is not None:
+                        jobData = jobTitle.text
+
+                        jobTitle_temp = jobTitle.text
+
+                        jobCompany = jobSoup.find("span", {"class": "company"})
+
+                        if jobCompany:
+                            jobData = jobData + " " + jobCompany.text
+                            jobCompany_temp = jobCompany.text
+
+                        jobLocation = jobSoup.find("span", {"class": "location"})
+
+                        if jobLocation:
+                            jobData = jobData + " " + jobLocation.text
+                            jobLocation_temp = jobLocation.text
+
+                        jobSalary = jobSoup.find("span", {"class": "no-wrap"})
+                        if jobSalary:
+                            jobData = jobData + " " + jobSalary.text
+                            jobSalary_temp = jobSalary.text
+
+                        jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
+                        if jobApplyLink:
+                            jobApplyLink = "https://www.indeed.com" + jobApplyLink.get("href")
+                            jobLink_temp = jobApplyLink
+                            # print(jobApplyLink)
+
+                        jobSummary = jobSoup.find("span", {"class": "summary"})
+                        if jobSummary:
+                            jobData = jobData + " " + jobSummary.text
+                            jobSummary_temp = jobSummary.text
+
+                        id_temp = j
+                        jobs.append(Jobs(id_temp, jobTitle_temp, jobCompany_temp, jobLocation_temp, jobSalary_temp,
+                                         jobSummary_temp, jobLink_temp))
+                        j += 1
+
+        serializableJobs = [job.as_json() for job in jobs]
+        request.session['jobs'] = serializableJobs
         return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
     else:
         return render(request, 'Signinform.html')
 
 def saveExplicitRating(request):
     if request.user.is_authenticated:
-        global jobs
+        jobs = request.session.get('jobs', None)
 
         ExplicitFbCollection = db.ExplicitFeedbackCollection
         jobDetailsCollection = db.RatedJobsCollection
 
         actual_star_number_and_job_number = request.POST.get('star')
-        jobType = [key for key in request.POST if key.startswith("jobType")]
-        jobType = jobType[0].split("+")
-        jobType = jobType[1]
-
 
         # Getting the username
         username = request.user.username
@@ -359,32 +233,12 @@ def saveExplicitRating(request):
 
         jobId = int(Number[2])
 
-        print(jobId)
         jobToBeStored = jobs[jobId - 1]
-        print(jobToBeStored.jobTitle)
-        jobTitle = jobToBeStored.jobTitle
+        print(jobToBeStored['jobTitle'])
+        jobTitle = jobToBeStored['jobTitle']
         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
         print(jobsData['userassignedId'])
         jobId = jobsData['userassignedId']
-
-        # jobsData = jobDetailsCollection.find_one({"userassignedId": jobId})
-        # print(jobsData)
-        #
-        # # If does not exists, retrieve the number of jobs and assign count+1 as jobId
-        # if jobsData is None:
-        #
-        #     if jobType == "False":
-        #         jobToBeStored = jobs[jobId - 1]
-        #         jobTitle = jobToBeStored.jobTitle
-        #         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
-        #         jobId = jobsData['userassignedId']
-        #     else:
-        #         storedJobsCollection = db.StoredJobsCollection
-        #
-        #         jobsData = storedJobsCollection.find_one({"ID": jobId})
-        #         jobTitle = jobsData['Title']
-        #         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
-        #         jobId = jobsData['userassignedId']
 
         # If the user has rated the job before
         feed_back_of_user = ExplicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
@@ -397,15 +251,15 @@ def saveExplicitRating(request):
                 'Jobid': jobId,
                 'ExplicitRating': Number[1]
             }
-            # result = ExplicitFbCollection.insert_one(Feedback)
+            result = ExplicitFbCollection.insert_one(Feedback)
             print("Feedback Saved")
         #If he had, update the rating
         else:
             print("The user has rated the job")
-            # ExplicitFbCollection.update(
-            #     {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
-            #     {"$set": {"ExplicitRating": Number[1]}}
-            # )
+            ExplicitFbCollection.update(
+                {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
+                {"$set": {"ExplicitRating": Number[1]}}
+            )
             print("Feedback Updated")
         return render(request, 'jobs.html', {"jobList": jobs})
     else:
@@ -480,7 +334,133 @@ def findTopRatedJobs(request):
 
 def backButton(request):
     if request.user.is_authenticated:
-        global jobs
+        jobs = request.session.get('jobs', None)
         return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
     else:
         return render(request, 'Signinform.html')
+
+
+# This was in case when we were handling three kind of jobs(jobs from ALS, jobs from content based, searched jobs) to be rated all having different local IDs
+# if jobDetailsCollection.count() == 0:
+#     print("Job Rated Database is empty")
+#     if jobType == "False":
+#         print("The job is the searched job")
+#         jobToBeStored = jobs[jobId - 1]
+#     else:
+#         print("The job is the stored job")
+#         jobsData = storedJobsCollection.find_one({"ID": jobId})
+#         try:
+#             salary = jobsData.Salary
+#         except:
+#             salary = ""
+#         try:
+#             applyLink = jobsData.ApplyLink
+#         except:
+#             applyLink = ""
+#         jobToBeStored = Jobs(jobsData['ID'], jobsData['Title'], jobsData['Company'], jobsData['Location'],
+#                              salary, jobsData['Summary'], applyLink)
+#     jobId = 15001
+#     Job = {
+#         'userassignedId': jobId,
+#         'JobTitle': jobToBeStored.jobTitle,
+#         'JobCompany': jobToBeStored.jobCompany,
+#         'JobLocation': jobToBeStored.jobLocation,
+#         'JobSalary': jobToBeStored.jobSalary,
+#         'JobSummary': jobToBeStored.jobSummary,
+#         'JobApplyLink': jobToBeStored.jobLink,
+#     }
+#     result = jobDetailsCollection.insert_one(Job)
+#     print("inserted")
+#
+# #Jobs Database is not empty
+# else:
+#     # check if the job already exists or not
+#     print("Job collection is not empty")
+#     print(jobId)
+#     jobsData = jobDetailsCollection.find_one({"userassignedId": jobId})
+#     print(jobsData)
+#
+#     #If does not exists, retrieve the number of jobs and assign count+1 as jobId
+#     if jobsData is None:
+#         if jobType == "False":
+#             print("The job is the searched job")
+#             jobToBeStored = jobs[jobId - 1]
+#             jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
+#
+#             #This covers the scenario when a user has clicked a searched job and then he again searches and the same job appers, the jobId will be local so we are searching on job title
+#             if jobsData is not None:
+#                 jobId = jobsData['userassignedId']
+#             else:
+#                 no_of_documents = jobDetailsCollection.count();
+#                 jobId = 15000 + no_of_documents + 1
+#                 Job = {
+#                     'userassignedId': jobId,
+#                     'JobTitle': jobToBeStored.jobTitle,
+#                     'JobCompany': jobToBeStored.jobCompany,
+#                     'JobLocation': jobToBeStored.jobLocation,
+#                     'JobSalary': jobToBeStored.jobSalary,
+#                     'JobSummary': jobToBeStored.jobSummary,
+#                     'JobApplyLink': jobToBeStored.jobLink,
+#                 }
+#                 result = jobDetailsCollection.insert_one(Job)
+#                 print("inserted")
+#         else:
+#             print("The job is the stored job")
+#             jobsData = storedJobsCollection.find_one({"ID": jobId})
+#             try:
+#                 salary = jobsData.Salary
+#             except:
+#                 salary = ""
+#             try:
+#                 applyLink = jobsData.ApplyLink
+#             except:
+#                 applyLink = ""
+#             jobToBeStored = Jobs(jobsData['ID'], jobsData['Title'], jobsData['Company'], jobsData['Location'],
+#                                  salary,
+#                                  jobsData['Summary'], applyLink)
+#             jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
+#
+#             # This covers the scenario when a user has clicked a recommended job(from CBR) and then he again clicks, its id will be the one from storedJobs so we'll search based on jobTitle
+#             if jobsData is not None:
+#                 jobId = jobsData['userassignedId']
+#             else:
+#                 no_of_documents = jobDetailsCollection.count();
+#                 jobId = 15000 + no_of_documents + 1
+#                 Job = {
+#                     'userassignedId': jobId,
+#                     'JobTitle': jobToBeStored.jobTitle,
+#                     'JobCompany': jobToBeStored.jobCompany,
+#                     'JobLocation': jobToBeStored.jobLocation,
+#                     'JobSalary': jobToBeStored.jobSalary,
+#                     'JobSummary': jobToBeStored.jobSummary,
+#                     'JobApplyLink': jobToBeStored.jobLink,
+#                 }
+#                 result = jobDetailsCollection.insert_one(Job)
+#                 print("inserted")
+#     else:
+#         jobId = jobsData['userassignedId']
+#         jobToBeStored = Jobs(jobsData['userassignedId'], jobsData['JobTitle'], jobsData['JobCompany'], jobsData['JobLocation'],
+#                              jobsData['JobSalary'], jobsData['JobSummary'], jobsData['JobApplyLink'])
+#
+
+
+#Explicit Rating
+# jobsData = jobDetailsCollection.find_one({"userassignedId": jobId})
+# print(jobsData)
+#
+# # If does not exists, retrieve the number of jobs and assign count+1 as jobId
+# if jobsData is None:
+#
+#     if jobType == "False":
+#         jobToBeStored = jobs[jobId - 1]
+#         jobTitle = jobToBeStored.jobTitle
+#         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
+#         jobId = jobsData['userassignedId']
+#     else:
+#         storedJobsCollection = db.StoredJobsCollection
+#
+#         jobsData = storedJobsCollection.find_one({"ID": jobId})
+#         jobTitle = jobsData['Title']
+#         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
+#         jobId = jobsData['userassignedId']
+

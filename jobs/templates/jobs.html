@@ -228,20 +228,6 @@
 {% if user.is_authenticated %}
     <header class="masthead">
     </header>
-<!-- Page Header -->
-{#<header class="masthead" style="background-image: url('{% static 'img/home.jpg' %}')">#}
-{#    <div class="overlay"></div>#}
-{#    <div class="container">#}
-{#        <div class="row">#}
-{#            <div class="col-lg-8 col-md-10 mx-auto">#}
-{#                <div class="site-heading">#}
-{#                    <h1>Jobs For you</h1>#}
-{#                    <span class="subheading">Here the jobs for you</span>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#</header>#}
 
 <h1 align="center">Job Postings</h1>
 {% if error %}
@@ -262,16 +248,16 @@
 
 
     <div class="form-group">
-        <input type="text" class="form-control" name="keyword" style="font-size: 12px"
+        <input type="text" class="form-control" name="keyword" style="font-size: 12px; margin-right: 20px"
                placeholder="Keywords: Django, Web" required>
     </div>
 
-    <div class="form-group" style="margin-left: 10px">
-        <input type="text" class="form-control" name="location" style="font-size: 12px"
-               placeholder="Location: City, State" required>
-    </div>
+{#    <div class="form-group" style="margin-left: 10px">#}
+{#        <input type="text" class="form-control" name="location" style="font-size: 12px"#}
+{#               placeholder="Location: City, State" required>#}
+{#    </div>#}
 
-    <button type="submit" class="btn btn-danger" style="margin-left: 10px">Search</button>
+    <button type="submit" class="btn btn-outline-primary" style="margin-left: 10px">Search</button>
 
 </form>
 
@@ -311,36 +297,6 @@
                     {% endif %}
 
 
-                </div>
-
-
-                <div class="stars" style="float: right; margin: 0px; padding: 0px">
-                    <!--I have to include this form tag, otherwise the form below this form would not work-->
-                    <form action="">
-                    </form>
-                    <form id="jobRating+{{ job.id }}" method="post" action="{% url 'jobs:saveExplicitRating' %}">
-                    {% csrf_token %}
-
-                        <!--input class="star star-5" id="star-5" type="radio" name="star" value="star+5+{{ job.id }}"
-                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
-                        <label class="star star-5" for="star-5"></label>
-
-                        <input class="star star-4" id="star-4" type="radio" name="star" value="star+4+{{ job.id }}"
-                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
-                        <label class="star star-4" for="star-4"></label>
-
-                        <input class="star star-3" id="star-3" type="radio" name="star" value="star+3+{{ job.id }}"
-                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
-                        <label class="star star-3" for="star-3"></label>
-
-                        <input class="star star-2" id="star-2" type="radio" name="star" value="star+2+{{ job.id }}"
-                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
-                        <label class="star star-2" for="star-2"></label>
-
-                        <input class="star star-1" id="star-1" type="radio" name="star" value="star+1+{{ job.id }}"
-                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
-                        <label class="star star-1" for="star-1"></label-->
-                    </form>
                 </div>
 
 

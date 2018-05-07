@@ -144,14 +144,12 @@ def jobsretrieving(request):
         jobSummary_temp = ""
         jobLink_temp = ""
 
-        desc = "web"
-        loc = ""
+        desc = request.POST['keyword']
         j = 1
         start = 0
 
         while start is not 20:
-            r = requests.get("https://www.indeed.com/jobs?q=" + request.POST['keyword'] + "&l=" + request.POST[
-                'location'] + "&start=" + str(start),
+            r = requests.get("https://www.indeed.com/jobs?q=" + desc + "&start=" + str(start),
                              proxies={"http": "http://61.233.25.166:80"})
             start += 10
             data = r.text

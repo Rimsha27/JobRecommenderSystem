@@ -218,7 +218,7 @@ def loginview(request):
             login(request, user)
             username = None
             if request.user.is_authenticated:
-                return render(request, 'jobs.html')
+                return jobViews.jobsviewing(request)
 
         else:
             return render(request, 'Signinform.html', {'error': 'The user name and password didn\'t match.'})

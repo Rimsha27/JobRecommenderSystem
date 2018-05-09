@@ -35,7 +35,7 @@ class Jobs(object):
 
 #This is called after successful Sign in or Sign up
 def jobsviewing(request):
-    return render(request, 'jobs.html')
+    return findTopRatedJobs(request)
 
 #This function displays a job detail and stores the click on read more as implicit feedback
 def displayingJobDetail(request):
@@ -58,12 +58,13 @@ def displayingJobDetail(request):
         jobId = jobId[0].split("+")
         jobId = int(jobId[1])
 
+        jobToBeStored = None
         print("The job to be saved", jobId)
         for job in jobs:
-            print("The available job id", job['id'])
-        jobToBeStored = jobs[jobId - 1]
+            if job['id'] == jobId:
+                jobToBeStored = job
 
-        if jobDetailsCollection.count() == 0:
+        if jobDetailsCollection.count() == 0 and jobToBeStored is not None:
             print("Job Rated Database is empty")
             jobId = 15001
             Job = {
@@ -77,7 +78,7 @@ def displayingJobDetail(request):
             }
             result = jobDetailsCollection.insert_one(Job)
             print("Job inserted and job id is ", jobId)
-        else:
+        elif jobToBeStored is not None:
             print("Job Rated Database is not empty")
 
             # This covers the scenario when a user has clicked a searched job and then he again searches and the same job appers, the jobId will be local so we are searching on job title
@@ -100,6 +101,8 @@ def displayingJobDetail(request):
                 }
                 result = jobDetailsCollection.insert_one(Job)
                 print("Job inserted and job id is ", jobId)
+        else:
+            return render(request, 'jobs.html', {"jobList": jobs, "popJobs": "The job does not exist"})
 
         #If the user has rated the job before
         feed_back_of_user = implicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
@@ -145,7 +148,7 @@ def jobsretrieving(request):
         jobLink_temp = ""
 
         desc = request.POST['keyword']
-        j = 1
+        j = 0
         start = 0
 
         while start is not 20:
@@ -205,7 +208,7 @@ def jobsretrieving(request):
 
         serializableJobs = [job.as_json() for job in jobs]
         request.session['jobs'] = serializableJobs
-        return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
+        return render(request, 'jobs.html', {"jobList": jobs, "popJobs": ""})
     else:
         return render(request, 'Signinform.html')
 
@@ -231,101 +234,75 @@ def saveExplicitRating(request):
 
         jobId = int(Number[2])
 
-        jobToBeStored = jobs[jobId - 1]
-        print(jobToBeStored['jobTitle'])
-        jobTitle = jobToBeStored['jobTitle']
-        jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
-        print(jobsData['userassignedId'])
-        jobId = jobsData['userassignedId']
+        jobToBeStored = None
+        print("The job to be saved", jobId)
+        popJobs = ""
+        if jobId >= 15000:
+            popJobs = "Most Popular Jobs"
+        for job in jobs:
+            if job['id'] == jobId:
+                jobToBeStored = job
 
-        # If the user has rated the job before
-        feed_back_of_user = ExplicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
+        if jobToBeStored is not None:
+            print(jobToBeStored['jobTitle'])
+            jobTitle = jobToBeStored['jobTitle']
+            jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
+            print(jobsData['userassignedId'])
+            jobId = jobsData['userassignedId']
 
-        # If he hadn't
-        if feed_back_of_user is None:
-            print("The user has not rated the job")
-            Feedback = {
-                'Userid': UserRecord[0].idformongo,
-                'Jobid': jobId,
-                'ExplicitRating': Number[1]
-            }
-            result = ExplicitFbCollection.insert_one(Feedback)
-            print("Feedback Saved")
-        #If he had, update the rating
+            # If the user has rated the job before
+            feed_back_of_user = ExplicitFbCollection.find_one({"Userid": UserRecord[0].idformongo, "Jobid": jobId})
+
+            # If he hadn't
+            if feed_back_of_user is None:
+                print("The user has not rated the job")
+                Feedback = {
+                    'Userid': UserRecord[0].idformongo,
+                    'Jobid': jobId,
+                    'ExplicitRating': Number[1]
+                }
+                result = ExplicitFbCollection.insert_one(Feedback)
+                print("Feedback Saved")
+            #If he had, update the rating
+            else:
+                print("The user has rated the job")
+                ExplicitFbCollection.update(
+                    {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
+                    {"$set": {"ExplicitRating": Number[1]}}
+                )
+                print("Feedback Updated")
+            return render(request, 'jobs.html', {"jobList": jobs, "popJobs": popJobs})
         else:
-            print("The user has rated the job")
-            ExplicitFbCollection.update(
-                {"Jobid": jobId, "Userid": UserRecord[0].idformongo},
-                {"$set": {"ExplicitRating": Number[1]}}
-            )
-            print("Feedback Updated")
-        return render(request, 'jobs.html', {"jobList": jobs})
-    else:
-        return render(request, 'Signinform.html')
-
-def recommendjobs(request):
-    if request.user.is_authenticated:
-        username = request.user.username
-        UserRecord = models.signupModel.objects.filter(email=username)
-        ID = UserRecord[0].idformongo
-        recommendedJobIDsUsingContent = recommendationAlgos.contentBasedRecommendations(ID)
-        recommendedJobIDsUsingALS = recommendationAlgos.ALSrecommendations(ID)
-        print(recommendedJobIDsUsingContent)
-        print(recommendedJobIDsUsingALS)
-
-        jobs = db.StoredJobsCollection
-        recommendedJobs = []
-        i=0
-        for jobId in recommendedJobIDsUsingContent:
-            if i==3:
-                break;
-            job = jobs.find_one({"ID": jobId})
-            print(job)
-            try:
-                salary = job['Salary']
-            except:
-                salary = ""
-            try:
-                applyLink = job['ApplyLink']
-            except:
-                applyLink = ""
-            recommendedJobs.append(Jobs(job['ID'], job['Title'], job['Company'], job['Location'], salary,
-                                        job['Summary'], applyLink))
-            i=i+1;
-
-        jobs = db.RatedJobsCollection
-        for jobId in recommendedJobIDsUsingALS:
-            if i==6:
-                break;
-            job = jobs.find_one({"userassignedId": jobId})
-            recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
-                                        job['JobSummary'], job['JobApplyLink']))
-            i=i+1;
-
-        print(recommendedJobs)
-
-        return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
+            return render(request, 'jobs.html', {"jobList": jobs, "popJobs": "The job does not exist"})
     else:
         return render(request, 'Signinform.html')
 
 def findTopRatedJobs(request):
     if request.user.is_authenticated:
-        topRatedJobs = recommendationAlgos.topRatedJobs()
+
         recommendedJobs = []
-
-        jobs = db.RatedJobsCollection
-        i = 1
-        for jobId in topRatedJobs:
-            if i == 6:
-                break;
-            job = jobs.find_one({"userassignedId": jobId})
-            recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
-                                        job['JobSummary'], job['JobApplyLink']))
-            i = i + 1;
-
-        print(recommendedJobs)
-
-        return render(request, 'jobs.html', {"jobList": recommendedJobs, "isStoredJob": True})
+        implicitRatingsCollection = db.ImplicitFeedbackCollection
+        jobsCollection = db.RatedJobsCollection
+        topRatedJobs = implicitRatingsCollection.aggregate(
+            [
+                { "$group": {"_id": "$Jobid", "total": { "$sum": "$ImplicitRating"}}},
+                { "$sort": {"total": -1}}
+            ]
+        )
+        i=0
+        for job in topRatedJobs:
+            if i == 10:
+                break
+            i = i + 1
+            id = job['_id']
+            print(id)
+            jobDetails = jobsCollection.find_one({"userassignedId": id})
+            recommendedJobs.append(
+                Jobs(jobDetails['userassignedId'], jobDetails['JobTitle'], jobDetails['JobCompany'], jobDetails['JobLocation'], jobDetails['JobSalary'],
+                     jobDetails['JobSummary'], jobDetails['JobApplyLink']))
+        serializableJobs = [job.as_json() for job in recommendedJobs]
+        request.session['jobs'] = serializableJobs
+        return render(request, 'jobs.html', {"jobList": recommendedJobs, "popJobs": "Most Popular Jobs"})
 
     else:
         return render(request, 'Signinform.html')
@@ -333,7 +310,10 @@ def findTopRatedJobs(request):
 def backButton(request):
     if request.user.is_authenticated:
         jobs = request.session.get('jobs', None)
-        return render(request, 'jobs.html', {"jobList": jobs, "isStoredJob": False })
+        popJobs = ""
+        if next(iter(jobs))['id'] >= 15000:
+            popJobs = "Most Popular Jobs"
+        return render(request, 'jobs.html', {"jobList": jobs, "popJobs": popJobs})
     else:
         return render(request, 'Signinform.html')
 
@@ -461,4 +441,47 @@ def backButton(request):
 #         jobTitle = jobsData['Title']
 #         jobsData = jobDetailsCollection.find_one({"JobTitle": jobTitle})
 #         jobId = jobsData['userassignedId']
+
+# def recommendjobs(request):
+#     if request.user.is_authenticated:
+#         username = request.user.username
+#         UserRecord = models.signupModel.objects.filter(email=username)
+#         ID = UserRecord[0].idformongo
+#         recommendedJobIDsUsingContent = recommendationAlgos.contentBasedRecommendations(ID)
+#         recommendedJobIDsUsingALS = recommendationAlgos.ALSrecommendations(ID)
+#         print(recommendedJobIDsUsingContent)
+#         print(recommendedJobIDsUsingALS)
+#
+#         jobs = db.StoredJobsCollection
+#         recommendedJobs = []
+#         i=0
+#         for jobId in recommendedJobIDsUsingContent:
+#             if i==3:
+#                 break;
+#             job = jobs.find_one({"ID": jobId})
+#             print(job)
+#             try:
+#                 salary = job['Salary']
+#             except:
+#                 salary = ""
+#             try:
+#                 applyLink = job['ApplyLink']
+#             except:
+#                 applyLink = ""
+#             recommendedJobs.append(Jobs(job['ID'], job['Title'], job['Company'], job['Location'], salary,
+#                                         job['Summary'], applyLink))
+#             i=i+1;
+#
+#         jobs = db.RatedJobsCollection
+#         for jobId in recommendedJobIDsUsingALS:
+#             if i==6:
+#                 break;
+#             job = jobs.find_one({"userassignedId": jobId})
+#             recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], job['JobLocation'], job['JobSalary'],
+#                                         job['JobSummary'], job['JobApplyLink']))
+#             i=i+1;
+#
+#         return render(request, 'jobs.html', {"jobList": recommendedJobs, "popJobs": ""})
+#     else:
+#         return render(request, 'Signinform.html')
 

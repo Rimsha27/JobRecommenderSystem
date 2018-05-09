@@ -44,7 +44,6 @@
     <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
 
 
-
     <style>
         .header {
             color: #36A0FF;
@@ -389,7 +388,7 @@
 
 
                                     <div class="container1">
-                                        <div class="row1">
+                                        <div class="row1 col-md-12">
 
                                             {% for work in UserExperience.all %}
                                                 <div class="col-lg-3">
@@ -408,30 +407,29 @@
                                                 </div>
                                                 <div class="col-lg-3">
                                                     <div class="col-xs-10">
-                                                        <input style="font-size: 12px" type="date" class="form-control"
-                                                               name="startdates[]"
-                                                               value="{{ work.startDate }}" readonly/>
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="years[]"
+                                                               value="{{ work.year }}" readonly/>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3">
-                                                    <div class="col-xs-10">
-                                                        <input style="font-size: 12px" type="date" class="form-control"
-                                                               name="enddates[]"
-                                                               value="{{ work.endDate }}" readonly/>
-                                                    </div>
-                                                </div>
-
 
 
                                                 <div class="col-lg-12">
                                                     <div class="col-xs-10">
                                                       <textarea name="Descriptions[]" style="width:250px;height:150px;font-size: 12px"
-                                                        id="desc" readonly>{{ work.feedbackforjob }}</textarea>
+                                                        id="desc" readonly>
+
+                                                          {% if work.feedbackforjob is not None %}
+                                                              {{ work.feedbackforjob }}
+                                                          {% else %}
+                                                              {{ "You didn't entered Anything." }}
+                                                          {% endif %}
+
+                                                      </textarea>
+
+
                                                     </div>
                                                 </div>
-
-
-
 
 
 
@@ -471,18 +469,12 @@
                                                 </div>
                                                 <div class="col-lg-3">
                                                     <div class="col-xs-10">
-                                                        <input style="font-size: 12px" type="date" class="form-control"
-                                                               name="startdates1[]"
-                                                               value="{{ edu.startdateedu }}" readonly/>
+                                                        <input style="font-size: 12px" type="text" class="form-control"
+                                                               name="years1[]"
+                                                               value="{{ edu.yearofedu }}" readonly/>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3">
-                                                    <div class="col-xs-10">
-                                                        <input style="font-size: 12px" type="date" class="form-control"
-                                                               name="enddates1[]"
-                                                               value="{{ edu.enddateedu }}" readonly/>
-                                                    </div>
-                                                </div>
+
                                             {% endfor %}
                                         </div>
                                     </div>
@@ -518,7 +510,6 @@
     </div>
 </div>
 {% endif %}
-
 
 <!--
 <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">

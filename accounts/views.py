@@ -2,12 +2,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from pandas._libs import json
+from bs4 import BeautifulSoup
 from pymongo import MongoClient
+import requests
 import urllib.parse
 
 from accounts import models
 from accounts.models import signupModel, workexperienceModel, Education
-
+from jobs import views as jobViews
 
 # from accounts.models import signupModel
 def signup(request):
@@ -23,7 +25,7 @@ def signup(request):
             mongo_uri = 'mongodb://%s:%s@%s/%s' % (_MONGODB_USER, _MONGODB_PASSWD, _MONGODB_HOST, _MONGODB_NAME)
             client = MongoClient(mongo_uri)
             db = client.jrs
-            #Here the stuff will also be saved in the MongoDB in order to generate the Recommendation for the User which has just signed in
+            # Here the stuff will also be save
 
             resumeCollection = db.ResumeCollection
 
@@ -67,8 +69,9 @@ def signup(request):
 
             listofcompanies1 = request.POST.getlist('Company[]')
             listofpositions1 = request.POST.getlist('Position[]')
-            listofstartdates1 = request.POST.getlist('startdates[]')
-            listofenddates1 = request.POST.getlist('enddates[]')
+            #listofstartdates1 = request.POST.getlist('startdates[]')
+            #listofenddates1 = request.POST.getlist('enddates[]')
+            listofyears1 = request.POST.getlist('years[]')
             listofDescription1 = request.POST.getlist('Descriptions[]')
 
             for i in range(0, len(listofcompanies1)):
@@ -82,15 +85,16 @@ def signup(request):
                         "ExperienceID": i,
                         "Company": listofcompanies1[i],
                         "Title": listofpositions1[i],
-                        "Dates": listofstartdates1[i] + ' to ' + listofenddates1[i],
+                        "Dates": listofyears1[i],
                         "Description": listofDescription1[i]
                     }}}
                 )
 
             listofdegrees1 = request.POST.getlist('degreenames[]')
             listofinstitution1 = request.POST.getlist('institution[]')
-            listofstartdates2 = request.POST.getlist('startdates1[]')
-            listofenddates2 = request.POST.getlist('enddates1[]')
+            #listofstartdates2 = request.POST.getlist('startdates1[]')
+            #listofenddates2 = request.POST.getlist('enddates1[]')
+            listofyears2 = request.POST.getlist('years1[]')
 
             for i in range(0, len(listofdegrees1)):
                 profileData += " " + listofinstitution1[i]
@@ -102,7 +106,7 @@ def signup(request):
                         "EducationID": i,
                         "School": listofinstitution1[i],
                         "Title": listofdegrees1[i],
-                        "Dates": listofstartdates2[i] + ' to ' + listofenddates2[i],
+                        "Dates": listofyears2[i],
                     }}}
                 )
 
@@ -162,23 +166,24 @@ def signup(request):
             # # Getting the list from the input tags
             listofcompanies = request.POST.getlist('Company[]')
             listofpositions = request.POST.getlist('Position[]')
-            listofstartdates = request.POST.getlist('startdates[]')
-            listofenddates = request.POST.getlist('enddates[]')
+            #listofstartdates = request.POST.getlist('startdates[]')
+            #listofenddates = request.POST.getlist('enddates[]')
+            listofyears = request.POST.getlist('years[]')
             listofDescription = request.POST.getlist('Descriptions[]')
 
             listofdegrees = request.POST.getlist('degreenames[]')
             listofinstitution = request.POST.getlist('institution[]')
-            listofstartdate1 = request.POST.getlist('startdates1[]')
-            listofenddate1 = request.POST.getlist('enddates1[]')
-            #
+            #listofstartdate1 = request.POST.getlist('startdates1[]')
+            #listofenddate1 = request.POST.getlist('enddates1[]')
+            listofyears1 = request.POST.getlist('years1[]')
+
             ArrayContainingExperiencesObject = []
             # Creating objects for the users
             for i in range(0, len(listofcompanies)):
                 temp = workexperienceModel.objects.create(id=None,
                                                           company=listofcompanies[i],
                                                           position=listofpositions[i],
-                                                          startDate=listofstartdates[i],
-                                                          endDate=listofenddates[i],
+                                                          year=listofyears[i],
                                                           feedbackforjob=listofDescription[i],
                                                           UserExperience=signUpModel)
                 ArrayContainingExperiencesObject.append(temp)
@@ -188,9 +193,10 @@ def signup(request):
 
             ArrayContainingEducationObject = []
             for i in range(0, len(listofdegrees)):
-                temp1 = Education.objects.create(id=None, degree=listofdegrees[i], institution=listofinstitution[i],
-                                                 startdateedu=listofstartdate1[i],
-                                                 enddateedu=listofenddate1[i], UserEducation=signUpModel)
+                temp1 = Education.objects.create(id=None, degree=listofdegrees[i],
+                                                 institution=listofinstitution[i],
+                                                 yearofedu=listofyears1[i],
+                                                 UserEducation=signUpModel)
                 ArrayContainingEducationObject.append(temp1)
 
             for k in range(1, len(ArrayContainingEducationObject)):
@@ -199,7 +205,7 @@ def signup(request):
                 # Setting the session
             login(request, user1)
             UserRecord = models.signupModel.objects.filter(email=request.POST['username'])
-            return render(request, 'jobs.html')
+            return jobViews.jobsviewing(request)
             # return render(request, 'MainPage.html', {'UserRecord': UserRecord})
     else:
         return render(request, 'Signupform.html')
@@ -229,9 +235,6 @@ def logoutview(request):
 
 
 def mainpageview(request):
-    print(request.user)
-    print(request.user.username)
-
     flag = False
     flag1 = False
 
@@ -255,7 +258,7 @@ def mainpageview(request):
                                                  'UserExperience': UserExperiences,
                                                  "flag": flag,
                                                  "flag1": flag1,
-                                                 "Skills": skills,
+                                               "Skills": skills,
                                                  "Interests": interests1
                                                  })
     else:
@@ -294,6 +297,7 @@ def editprofile(request):
     else:
         return render(request, 'Signinform.html')
 
+
 def updateinformation(request):
     flag = False
     flag1 = False
@@ -308,13 +312,11 @@ def updateinformation(request):
                 logout(request)
 
                 User.objects.filter(username=username).delete()
-                print(request.user.username)
 
                 # signupModel.objects.filter(email=username).delete()
 
                 # Creating Everything new from here on
                 user1 = User.objects.create_user(request.POST['email'], password=request.POST['password'])
-                print(request.user.username)
 
                 # Creating the user Signup Model
                 signUpModel = signupModel.objects.create(user=user1, name=request.POST['name'],
@@ -332,16 +334,16 @@ def updateinformation(request):
                 # Getting the list from the input tags
                 listofcompanies = request.POST.getlist('Company[]')
                 listofpositions = request.POST.getlist('Position[]')
-                listofstartdates = request.POST.getlist('startdates[]')
-                listofenddates = request.POST.getlist('enddates[]')
+                #listofstartdates = request.POST.getlist('startdates[]')
+                #listofenddates = request.POST.getlist('enddates[]')
+                listofyears = request.POST.getlist('years[]')
                 listofDescriptions = request.POST.getlist('Descriptions[]')
-
-
 
                 listofdegrees = request.POST.getlist('degreenames[]')
                 listofinstitution = request.POST.getlist('institution[]')
-                listofstartdate1 = request.POST.getlist('startdates1[]')
-                listofenddate1 = request.POST.getlist('enddates1[]')
+                #listofstartdate1 = request.POST.getlist('startdates1[]')
+                #listofenddate1 = request.POST.getlist('enddates1[]')
+                listofyears1 = request.POST.getlist('years1[]')
 
                 ArrayContainingExperiencesObject = []
                 # Creating objects for the users
@@ -349,9 +351,8 @@ def updateinformation(request):
                     temp = workexperienceModel.objects.create(id=None,
                                                               company=listofcompanies[i],
                                                               position=listofpositions[i],
-                                                              startDate=listofstartdates[i],
-                                                              endDate=listofenddates[i],
-                                                              feedbackforjob=listofDescriptions[i],
+                                                              year=listofyears[i],
+                                                              feedbackforjob = listofDescriptions[i],
                                                               UserExperience=signUpModel)
                     ArrayContainingExperiencesObject.append(temp)
 
@@ -360,9 +361,10 @@ def updateinformation(request):
 
                 ArrayContainingEducationObject = []
                 for i in range(0, len(listofdegrees)):
-                    temp1 = Education.objects.create(id=None, degree=listofdegrees[i], institution=listofinstitution[i],
-                                                     startdateedu=listofstartdate1[i],
-                                                     enddateedu=listofenddate1[i], UserEducation=signUpModel)
+                    temp1 = Education.objects.create(id=None, degree=listofdegrees[i],
+                                                     institution=listofinstitution[i],
+                                                     yearofedu=listofyears1[i],
+                                                     UserEducation=signUpModel)
                     ArrayContainingEducationObject.append(temp1)
 
                 for k in range(1, len(ArrayContainingEducationObject)):
@@ -396,7 +398,7 @@ def updateinformation(request):
                                                                 "flag1": flag1,
                                                                 "Skills": skills,
                                                                 "Interests": interests1,
-                                                                "error": "Email already taken please try a different email!"
+                                                                "error": "Email already taken.Please try a different email!"
                                                                 })
                 else:
 
@@ -425,15 +427,16 @@ def updateinformation(request):
                     # Getting the list from the input tags
                     listofcompanies = request.POST.getlist('Company[]')
                     listofpositions = request.POST.getlist('Position[]')
-                    listofstartdates = request.POST.getlist('startdates[]')
-                    listofenddates = request.POST.getlist('enddates[]')
+                    #listofstartdates = request.POST.getlist('startdates[]')
+                    #listofenddates = request.POST.getlist('enddates[]')
+                    listofyears = request.POST.getlist('years[]')
                     listofDescriptions = request.POST.getlist('Descriptions')
-
 
                     listofdegrees = request.POST.getlist('degreenames[]')
                     listofinstitution = request.POST.getlist('institution[]')
-                    listofstartdate1 = request.POST.getlist('startdates1[]')
-                    listofenddate1 = request.POST.getlist('enddates1[]')
+                    #listofstartdate1 = request.POST.getlist('startdates1[]')
+                    #listofenddate1 = request.POST.getlist('enddates1[]')
+                    listofyears1  = request.POST.getlist('years1[]')
 
                     ArrayContainingExperiencesObject = []
                     # Creating objects for the users
@@ -441,8 +444,7 @@ def updateinformation(request):
                         temp = workexperienceModel.objects.create(id=None,
                                                                   company=listofcompanies[i],
                                                                   position=listofpositions[i],
-                                                                  startDate=listofstartdates[i],
-                                                                  endDate=listofenddates[i],
+                                                                  year=listofyears[i],
                                                                   feedbackforjob=listofDescriptions[i],
                                                                   UserExperience=signUpModel)
                         ArrayContainingExperiencesObject.append(temp)
@@ -452,10 +454,11 @@ def updateinformation(request):
 
                     ArrayContainingEducationObject = []
                     for i in range(0, len(listofdegrees)):
-                        temp1 = Education.objects.create(id=None, degree=listofdegrees[i],
+                        temp1 = Education.objects.create(id=None,
+                                                         degree=listofdegrees[i],
                                                          institution=listofinstitution[i],
-                                                         startdateedu=listofstartdate1[i],
-                                                         enddateedu=listofenddate1[i], UserEducation=signUpModel)
+                                                         yearofedu=listofyears1[i],
+                                                         UserEducation=signUpModel)
                         ArrayContainingEducationObject.append(temp1)
 
                     for k in range(1, len(ArrayContainingEducationObject)):
@@ -468,6 +471,8 @@ def updateinformation(request):
         return render(request, 'EditProfile.html')
     else:
         return render(request, 'Signinform.html')
+
+
 
 def username_present(username):
     try:

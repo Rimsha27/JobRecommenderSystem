@@ -22,8 +22,9 @@ class signupModel(models.Model):
 class workexperienceModel(models.Model):
     company = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
-    startDate = models.CharField(max_length=100)
-    endDate = models.CharField(max_length=100)
+    #startDate = models.CharField(max_length=100)
+    #endDate = models.CharField(max_length=100)
+    year = models.CharField(max_length=100, null=True)
     feedbackforjob = models.CharField(max_length=100, null=True)
     UserExperience = models.ForeignKey(signupModel, on_delete=models.CASCADE)
 
@@ -31,6 +32,7 @@ class workexperienceModel(models.Model):
 class Education(models.Model):
     degree = models.CharField(max_length=100)
     institution = models.CharField(max_length=100)
-    startdateedu = models.CharField(max_length=100)
-    enddateedu = models.CharField(max_length=100)
+    #startdateedu = models.CharField(max_length=100)
+    #enddateedu = models.CharField(max_length=100)
+    yearofedu = models.CharField(max_length=100, null = True)
     UserEducation = models.ForeignKey(signupModel, on_delete=models.CASCADE)

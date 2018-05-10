@@ -59,6 +59,20 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="{% static 'js/clean-blog.min.js' %}"></script>
+
+    <script type="text/javascript">
+        $(window).on('load',function(){
+            $('#myModal').modal('show');
+        });
+    </script>
 
 </head>
 
@@ -103,19 +117,35 @@
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="site-heading">
                     <h1>Job Recommender System</h1>
-                    <span class="subheading">This website is for testing purpose.</span>
-                    <ol>
-                        <li>Sign up providing your information.</li>
-                        <li>Search the jobs by keyword.</li>
-                        <li>As the result of search appears, open the job you seem to like by clicking on "read more" to read the description of job.</li>
-                        <li>Rate the job according to how much you liked that job.</li>
-                    </ol>
                 </div>
             </div>
         </div>
     </div>
 </header>
 <hr>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h2>This website is for testing purpose.</h2>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ol>
+                    <li>Sign up providing your information.</li>
+                    <li>Search the jobs by keyword.</li>
+                    <li>As the result of search appears, open the job you seem to like by clicking on "read more" to read the description of job.</li>
+                    <li>Rate the job according to how much you liked that job.</li>
+                </ol>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Footer -->
 <footer>
@@ -153,21 +183,6 @@
         </div>
     </div>
 </footer>
-
-<!-- Bootstrap core JavaScript
-
-
--->
-
-<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-
-
-<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-<!-- Custom scripts for this template -->
-<script src="{% static 'js/clean-blog.min.js' %}"></script>
-
 
 </body>
 

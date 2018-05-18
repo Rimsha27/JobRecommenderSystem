@@ -41,9 +41,9 @@ def jobsviewing(request):
 def displayingJobDetail(request):
     if request.user.is_authenticated:
         jobs = request.session.get('jobs', None)
-        implicitFbCollection = db.ImplicitFeedbackCollection
+        implicitFbCollection = db.NImplicitFeedbackCollection
 
-        jobDetailsCollection = db.RatedJobsCollection
+        jobDetailsCollection = db.NRatedJobsCollection
 
         # Here I will first get the Job id from the Hidden Text Box
         jobId = [key for key in request.POST if key.startswith("jobId")]
@@ -216,8 +216,8 @@ def saveExplicitRating(request):
     if request.user.is_authenticated:
         jobs = request.session.get('jobs', None)
 
-        ExplicitFbCollection = db.ExplicitFeedbackCollection
-        jobDetailsCollection = db.RatedJobsCollection
+        ExplicitFbCollection = db.NExplicitFeedbackCollection
+        jobDetailsCollection = db.NRatedJobsCollection
 
         actual_star_number_and_job_number = request.POST.get('star')
 
@@ -281,8 +281,8 @@ def findTopRatedJobs(request):
     if request.user.is_authenticated:
 
         recommendedJobs = []
-        implicitRatingsCollection = db.ImplicitFeedbackCollection
-        jobsCollection = db.RatedJobsCollection
+        implicitRatingsCollection = db.NImplicitFeedbackCollection
+        jobsCollection = db.NRatedJobsCollection
         topRatedJobs = implicitRatingsCollection.aggregate(
             [
                 { "$group": {"_id": "$Jobid", "total": { "$sum": "$ImplicitRating"}}},
